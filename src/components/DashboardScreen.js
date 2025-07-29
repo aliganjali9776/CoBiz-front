@@ -1,7 +1,7 @@
 // src/components/DashboardScreen.js
 
 import React from 'react';
-import logo from '../logo.jpeg';
+import logo from '../Logo.jpg';
 
 function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGoToKnowledge, onGoToAI, onGoToPomodoro, onLogout }) {
   if (!user) {
