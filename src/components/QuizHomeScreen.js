@@ -1,7 +1,8 @@
 // src/components/QuizHomeScreen.js
 
 import React from 'react';
-import { Line } from 'react-chartjs-2'; // eslint-disable-line no-unused-vars // نمودار را به اینجا منتقل می‌کنیم
+// نمودار را به اینجا منتقل می‌کنیم
+import { Line } from 'react-chartjs-2'; // eslint-disable-line no-unused-vars 
 // ... بقیه import های ChartJS ...
 // اگر از ChartJS استفاده می‌کنید، ممکن است نیاز به import های زیر هم داشته باشید،
 // اما آن‌ها را فقط در صورتی اضافه کنید که واقعاً استفاده می‌شوند.
