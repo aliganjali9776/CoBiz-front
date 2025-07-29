@@ -12,7 +12,7 @@ import QuizHomeScreen from './components/QuizHomeScreen';
 import CalendarScreen from './components/CalendarScreen';
 import KnowledgeScreen from './components/KnowledgeScreen';
 import AIScreen from './components/AIScreen';
-import PomodoroScreen from './components/PomodoroScreen';
+import PomodoroScreen from './components/PomodoroScreen'; // eslint-disable-line no-unused-vars
 import './App.css';
 
 const BACKEND_URL = 'https://cobiz.onrender.com';

@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Calendar from '@hassanmojab/react-modern-calendar-datepicker';
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker'; // این خط حذف شد چون DatePicker از react-datepicker استفاده نشده بود
 import "react-datepicker/dist/react-datepicker.css";
 import { faIR } from 'date-fns/locale';
 import moment from 'moment-jalaali';
@@ -100,11 +100,11 @@ function CalendarScreen({ user, onUpdateUser, onGoToDashboard }) {
     return allEvents.filter(event => moment(event.date).format('YYYY-MM-DD') === todayStr);
   }, [allEvents]);
 
-  const eventsForSelectedDay = useMemo(() => {
-    if (!selectedDay) return [];
-    const selectedDateStr = moment(`${selectedDay.year}/${selectedDay.month}/${selectedDay.day}`, 'jYYYY/jM/jD').format('YYYY-MM-DD');
-    return allEvents.filter(event => moment(event.date).format('YYYY-MM-DD') === selectedDateStr);
-  }, [selectedDay, allEvents]);
+  // const eventsForSelectedDay = useMemo(() => { // این متغیر حذف شد چون در کد استفاده نشده بود
+  //   if (!selectedDay) return [];
+  //   const selectedDateStr = moment(`${selectedDay.year}/${selectedDay.month}/${selectedDay.day}`, 'jYYYY/jM/jD').format('YYYY-MM-DD');
+  //   return allEvents.filter(event => moment(event.date).format('YYYY-MM-DD') === selectedDateStr);
+  // }, [selectedDay, allEvents]);
 
   // --- Guard clause now comes AFTER all hooks ---
   if (!user) {
