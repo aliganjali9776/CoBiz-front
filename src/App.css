@@ -1,0 +1,259 @@
+/* src/App.css - نسخه نهایی و کامل با تم روشن اصلاح شده */
+
+/* ایمپورت کردن فونت و استایل‌های پایه کتابخانه‌ها */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
+@import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
+@import 'react-datepicker/dist/react-datepicker.css';
+
+/* تعریف پالت رنگی (تم روشن) */
+:root {
+  --background-light: #f4f7fa;
+  --surface-white: #ffffff;
+  --text-primary-dark: #2c3e50;
+  --text-secondary-dark: #7f8c8d;
+  --accent-color: #34495e;
+  --border-color: #dfe4ea;
+  --success: #27ae60;
+  --danger: #e74c3c;
+  --bright-yellow: #ffdd57;
+}
+
+/* انیمیشن */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- استایل‌های عمومی --- */
+body {
+  background: var(--background-light);
+  font-family: 'Vazirmatn', sans-serif;
+  color: var(--text-primary-dark);
+  direction: rtl;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* استایل پایه برای تمام کانتینرها */
+.role-selection, 
+.quiz-container, 
+.results-container,
+.login-container,
+.okr-container,
+.main-menu-container, 
+.quiz-home-container,
+.calendar-container,
+.knowledge-container,
+.pomodoro-container {
+  background-color: var(--surface-white);
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 900px;
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  animation: fadeIn 0.6s ease-out;
+}
+.loading-container { color: var(--text-secondary-dark); padding: 50px; text-align: center; font-size: 1.2rem; }
+
+/* --- صفحه ورود --- */
+.login-container { max-width: 500px; text-align: center; }
+.login-container h1 { color: var(--text-primary-dark); }
+.login-form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+.login-form input {
+  padding: 15px; font-size: 1rem; border-radius: 8px;
+  border: 1px solid var(--border-color); font-family: inherit; text-align: right;
+}
+.error-message { color: var(--danger); margin-top: 15px; font-weight: 500; }
+.toggle-mode { margin-top: 20px; color: var(--text-secondary-dark); }
+.toggle-mode span { color: var(--accent-color); font-weight: bold; cursor: pointer; }
+
+/* --- داشبورد اصلی (منوی آیکون‌ها) --- */
+.main-menu-container { padding: 20px; max-width: 800px; }
+.main-menu-header {
+  display: flex; align-items: center; gap: 20px;
+  border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 30px;
+}
+.main-menu-header .app-logo-small { max-width: 80px; height: 80px; margin-bottom: 0; flex-shrink: 0; }
+.main-menu-header div { text-align: right; }
+.main-menu-header h2 { font-size: 1.8rem; font-weight: 800; color:var(--text-primary-dark); margin:0; }
+.main-menu-header p { font-size: 0; }
+.main-menu-header p::before {
+  content: 'CoBiz | با هم بیزینس‌ت رو بهبود میدیم!';
+  font-size: 1.1rem; 
+  color: var(--text-secondary-dark);
+}
+.logout-btn-icon {
+  margin-right: auto; padding: 10px; background: transparent; border: none;
+  font-size: 1.5rem; color: var(--text-secondary-dark); cursor: pointer; transition: color 0.3s ease;
+}
+.logout-btn-icon:hover { color: var(--danger); }
+.main-menu-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 25px; text-align: center;
+}
+.menu-item {
+  background-color: var(--background-light); padding: 20px 10px; border-radius: 16px; border: 1px solid var(--border-color);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 15px; cursor: pointer; transition: all 0.3s ease;
+  font-weight: 700; font-size: 1rem; color: var(--text-primary-dark);
+}
+.menu-item:hover {
+  border-color: var(--accent-color); color: var(--accent-color);
+  transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.menu-item-icon {
+  width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background-color: var(--text-primary-dark); color: var(--surface-white); font-size: 2rem; flex-shrink: 0;
+}
+.menu-item.disabled { opacity: 0.5; cursor: not-allowed; color: var(--text-secondary-dark); }
+.menu-item.disabled:hover { transform: none; box-shadow: none; border-color: var(--border-color); }
+
+/* --- هدر صفحات داخلی --- */
+.page-header {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;
+}
+.page-header h1 { margin: 0; color: var(--text-primary-dark); }
+.back-to-dashboard-btn {
+  background-color: transparent; color: var(--accent-color); border: 1px solid var(--accent-color);
+  padding: 10px 15px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+}
+.back-to-dashboard-btn:hover { background-color: var(--accent-color); color: var(--white); }
+
+/* --- داشبورد آزمون‌ها --- */
+.chart-container { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-color); }
+.results-history { margin-top: 20px; text-align: right; padding-top: 20px; }
+.results-history h3 { color: var(--text-primary-dark); margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+.results-history ul { list-style: none; padding: 0; }
+.results-history li {
+  background-color: var(--background-light); padding: 15px; border-radius: 8px; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+}
+.result-scenario { font-weight: bold; }
+.result-score { font-size: 1.1rem; color: var(--accent-color); font-weight: 700; }
+.result-date, .no-results, .no-results-box span { color: var(--text-secondary-dark); }
+.no-results-box { background-color: var(--background-light); }
+.no-results-box p { color: var(--text-primary-dark); }
+
+/* --- صفحه آزمون و نتایج --- */
+.role-selection h1, .scenario-header h2, .results-container h2, .answers-review h3 { color: var(--text-primary-dark); }
+.scenario-description, .question-card h4 { color: var(--text-secondary-dark); }
+.score-circle {
+  width: 180px; height: 180px; border-radius: 50%; margin: 20px auto 40px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  background: conic-gradient(from 180deg, var(--accent-color), #5d6d7e, var(--accent-color));
+  color: var(--white); box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+.score-circle p { color: var(--text-secondary-dark); font-weight: bold; }
+.score-circle span { font-size: 4rem; font-weight: 800; line-height: 1.2; }
+.answer-card { background-color: #f8f9fa; border-color: var(--border-color); }
+.rationale-correct { background-color: #f0f2f5; border-color: var(--accent-color); }
+.report-paywall { background-color: #f0f2f5; border-color: var(--accent-color); }
+.report-paywall h3 { color: var(--accent-color); }
+
+/* --- صفحه OKR --- */
+.okr-container.professional { background-color: var(--background-light); max-width: 900px; }
+.okr-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+.tabs { background-color: var(--text-primary-dark); padding: 5px; border-radius: 10px; }
+.tabs button { color: var(--surface-white); border: none; background: transparent; }
+.tabs button.active { background-color: var(--surface-white); color: var(--text-primary-dark); }
+.objective-card { background-color: var(--surface-white); }
+.progress-donut-container span, .objective-header h2 { color: var(--text-primary-dark); }
+.kr-owner, .kr-deadline { background-color: var(--background-light); }
+.add-kr-form { background-color: #f8f9fa; }
+.add-kr-form input { background-color: var(--surface-white); }
+.modal-content input, .modal-content select { font-family: 'Vazirmatn', sans-serif; font-size: 1.1rem; padding: 15px; }
+
+/* --- صفحه تقویم --- */
+.calendar-container.modern { background-color: var(--background-light); }
+.calendar-container.modern .page-header h1, .calendar-container.modern .back-to-dashboard-btn { color: var(--text-primary-dark); }
+.daily-agenda-wrapper, .calendar-widget-wrapper.full-view, .add-event-form, .events-view { background-color: var(--surface-white); }
+.responsive-calendar { box-shadow: none !important; position: static !important; font-family: 'Vazirmatn', sans-serif !important; }
+.custom-calendar-footer-ads {
+  display: flex; justify-content: space-between; align-items: center; padding: 10px;
+  background-color: #f8f9fa; border-top: 1px solid var(--border-color);
+}
+.footer-today-styled {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 5px 20px; border-left: 2px solid var(--border-color);
+}
+.footer-today-styled span { font-size: 0.9rem; color: var(--text-secondary-dark); }
+.footer-today-styled strong { font-size: 1.4rem; font-weight: 700; color: var(--accent-color); }
+.footer-ad-placeholder {
+  flex-grow: 1; height: 60px; margin-right: 15px; background-color: rgba(0,0,0,0.05);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary-dark); font-size: 0.9rem;
+}
+.footer-ad-placeholder::before { content: 'فضای بنر تبلیغاتی'; }
+.event-datepicker { text-align: center; cursor: pointer; }
+
+/* --- کتابخانه دانش --- */
+.knowledge-container { background-color: var(--background-light); }
+.format-card, .knowledge-filters.secondary, .article-card { background-color: var(--surface-white); }
+.format-card i { color: var(--accent-color); }
+.format-card.active { background-color: var(--accent-color); color: var(--white); border-color: var(--accent-color); }
+.format-card.active i { color: var(--white); }
+.category-filter select, .search-bar input { background-color: var(--background-light); }
+.article-card h3 { color: var(--accent-color); }
+.tag { background-color: var(--background-light); }
+
+/* --- تایمر پومودورو (طراحی اولیه روشن) --- */
+.pomodoro-container { max-width: 500px; margin: 40px auto; background: transparent; border: none; box-shadow: none; }
+.timer-card { background-color: var(--surface-white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+.timer-modes { display: flex; justify-content: center; gap: 10px; background-color: var(--background-light); padding: 5px; border-radius: 10px; margin-bottom: 30px; }
+.timer-modes button { flex-grow: 1; border: none; background-color: transparent; color: var(--text-secondary-dark); font-weight: 700; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.timer-modes button.active { background-color: var(--surface-white); color: var(--text-primary-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.timer-display { font-size: 7rem; font-weight: 800; color: var(--text-primary-dark); margin: 20px 0; }
+.timer-controls { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+.control-btn { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; padding: 12px 25px; border: 2px solid var(--border-color); background-color: transparent; }
+.control-btn.main { background-color: var(--text-primary-dark); border-color: var(--text-primary-dark); color: var(--white); font-size: 1.3rem; padding: 15px 35px; }
+
+/* --- دستیار AI (طراحی اولیه روشن) --- */
+.ai-container { max-width: 800px; background-color: var(--background-light); }
+.chat-window { background-color: var(--surface-white); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 60vh; }
+.chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+.message { padding: 12px 18px; border-radius: 20px; max-width: 80%; line-height: 1.6; }
+.message.user { background-color: var(--text-primary-dark); color: var(--white); align-self: flex-start; border-bottom-left-radius: 5px; }
+.message.ai { background-color: var(--background-light); color: var(--text-primary-dark); align-self: flex-end; border-bottom-right-radius: 5px; }
+.chat-input-form { display: flex; padding: 15px; border-top: 1px solid var(--border-color); }
+.chat-input-form input { flex-grow: 1; border: none; background: transparent; padding: 10px; font-size: 1rem; font-family: inherit; }
+.chat-input-form button { background: var(--text-primary-dark); color: var(--white); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.2rem; padding: 0; }
+
+/* --- استایل‌های عمومی دکمه‌ها و عناصر دیگر --- */
+button { cursor: pointer; border-radius: 8px; border: 1px solid transparent; padding: 0.8em 1.2em; font-size: 1em; font-weight: 700; font-family: inherit; transition: all 0.3s ease; }
+.options button { background-color: var(--surface-white); border-color: var(--border-color); color: var(--text-primary-dark); }
+.options button:hover { border-color: var(--accent-color); background-color: var(--accent-color); color: var(--white); }
+.login-form button, .role-buttons button { background-color: var(--text-primary-dark); color: var(--surface-white); }
+.start-quiz-btn { background-color: var(--success); color: white; border:none; }
+.logout-btn:hover { text-decoration: underline; color: var(--danger); }
+.unlock-button { background-color: var(--success); color: var(--white); border: none; }
+.btn-primary { background-color: var(--accent-color); color: var(--white); border: none; }
+.btn-secondary { background-color: var(--border-color); }
+
+/* --- مودال --- */
+.modal-overlay { z-index: 1000; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; }
+.modal-content { background: var(--surface-white); color: var(--text-primary-dark); }
+.modal-content h2 { color: var(--text-primary-dark); }
+.modal-content input, .modal-content select { background-color: var(--background-light); }
+
+/* --- کدهای ریسپانسیو --- */
+@media (max-width: 768px) {
+  body { padding: 5px; }
+  .main-menu-container, .calendar-container, .okr-container, .knowledge-container, .pomodoro-container { padding: 15px; margin-top: 15px; }
+  .main-menu-header, .okr-header, .page-header { flex-direction: column; gap: 15px; text-align: center; }
+  .main-menu-grid, .format-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .calendar-layout.final, .input-forms-section { grid-template-columns: 1fr; }
+}
