@@ -1,94 +1,99 @@
 // src/components/QuizHomeScreen.js
 
-import React from 'react';
-// نمودار را به اینجا منتقل می‌کنیم
-import { Line } from 'react-chartjs-2'; // eslint-disable-line no-unused-vars 
-// ... بقیه import های ChartJS ...
-// اگر از ChartJS استفاده می‌کنید، ممکن است نیاز به import های زیر هم داشته باشید،
-// اما آن‌ها را فقط در صورتی اضافه کنید که واقعاً استفاده می‌شوند.
-// import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import React, { useMemo } from 'react';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { quizId } from '../QuizData';
 
-// ChartJS.register(
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-//   LineElement,
-//   Title,
-//   Tooltip,
-//   Legend
-// );
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-
-// کامپوننت نمودار را هم به این فایل منتقل می‌کنیم
-const PerformanceChart = ({ results }) => { 
-  /* ... کد کامل نمودار ... 
-  شما باید کد کامل کامپوننت PerformanceChart را در اینجا قرار دهید.
-  این کامپوننت باید از 'Line' که در بالا ایمپورت شده، استفاده کند تا نمودار را نمایش دهد.
-  مثال:
+// کامپوننت نمودار عملکرد
+const PerformanceChart = ({ results }) => {
+  const labels = results.map(r => new Date(r.date).toLocaleDateString('fa-IR'));
+  const dataPoints = results.map(r => r.percentage);
   const data = {
-    labels: results.map(r => new Date(r.date).toLocaleDateString('fa-IR')),
+    labels,
     datasets: [
       {
-        label: 'درصد امتیاز',
-        data: results.map(r => r.percentage),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        label: 'درصد موفقیت',
+        data: dataPoints,
+        borderColor: '#4e54c8',
+        backgroundColor: '#8f94fb',
+        tension: 0.1,
       },
     ],
   };
-
   const options = {
     responsive: true,
     plugins: {
-      legend: {
-        position: 'top',
-      },
+      legend: { position: 'top' },
       title: {
         display: true,
-        text: 'عملکرد در آزمون‌های مدیریت بحران',
+        text: 'روند پیشرفت شما در آزمون مدیریت بحران',
+        font: { family: 'Vazirmatn', size: 16, color: '#fff' },
+        color: '#fff'
       },
     },
     scales: {
-      y: {
-        min: 0,
-        max: 100,
-      }
+        x: { ticks: { color: '#fff' } },
+        y: { ticks: { color: '#fff' } }
     }
   };
-
-  return <Line data={data} options={options} />;
-  */
-  // در حال حاضر، اگر کد کامل نمودار را ندارید، می‌توانید یک placeholder برگردانید:
-  return <p className="text-secondary-dark">نمودار عملکرد در اینجا نمایش داده خواهد شد.</p>;
+  return <Line options={options} data={data} />;
 };
 
-function QuizHomeScreen({ user, onStartNewQuiz, onGoToDashboard }) {
-  const results = user.results || {};
-  const crisisResults = results['crisis-management'] || [];
+
+function QuizHomeScreen({ user, onStartNewQuiz, onGoToDashboard, onGoToLeaderboard }) {
+  if (!user) {
+    return <div className="loading-container">در حال بارگذاری...</div>;
+  }
+  
+  const quizResults = user.results?.[quizId] || [];
 
   return (
     <div className="quiz-home-container">
       <div className="page-header">
-        <h1>داشبورد آزمون‌ها</h1>
-        <button onClick={onGoToDashboard} className="back-to-dashboard-btn">
-          <i className="fa-solid fa-arrow-right"></i> بازگشت به منوی اصلی
+        <h1>داشبورد شبیه‌ساز</h1>
+        <button onClick={onGoToDashboard} className="back-to-dashboard-btn minimal">
+          <i className="fa-solid fa-arrow-right"></i> بازگشت
         </button>
       </div>
-      <p>در این بخش می‌توانید در آزمون‌های شبیه‌ساز شرکت کرده و نتایج خود را بررسی کنید.</p>
+      <p>در این بخش می‌توانید در شبیه‌سازهای مدیریتی شرکت کرده و نتایج خود را بررسی کنید.</p>
       
       <button className="start-quiz-btn" onClick={onStartNewQuiz}>
-        شروع آزمون جدید مدیریت بحران
+        شروع شبیه‌ساز جدید مدیریت بحران
       </button>
 
-      {crisisResults.length > 0 ? (
+      <button className="leaderboard-link-btn" onClick={onGoToLeaderboard}>
+        <i className="fa-solid fa-trophy"></i> مشاهده رتبه‌بندی کل
+      </button>
+
+      {quizResults.length > 0 ? (
         <>
           <div className="chart-container">
-            <PerformanceChart results={crisisResults} />
+            <PerformanceChart results={quizResults} />
           </div>
           <div className="results-history">
             <h3>تاریخچه آزمون‌ها</h3>
             <ul>
-              {crisisResults.map((result, index) => (
+              {quizResults.map((result, index) => (
                 <li key={index}>
                   <span className="result-scenario">سناریو: {result.scenarioTitle}</span>
                   <span className="result-score">امتیاز: {Math.round(result.percentage)}%</span>
@@ -100,7 +105,7 @@ function QuizHomeScreen({ user, onStartNewQuiz, onGoToDashboard }) {
         </>
       ) : (
         <div className="no-results-box">
-          <p>شما هنوز در هیچ آزمونی شرکت نکرده‌اید.</p>
+          <p>شما هنوز در هیچ شبیه‌سازی شرکت نکرده‌اید.</p>
           <span>اولین آزمون خود را با کلیک روی دکمه بالا شروع کنید.</span>
         </div>
       )}

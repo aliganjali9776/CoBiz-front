@@ -1,259 +1,646 @@
-/* src/App.css - نسخه نهایی و کامل با تم روشن اصلاح شده */
+/* src/App.css - نسخه نهایی و کامل با تمام طراحی‌های تایید شده */
 
-/* ایمپورت کردن فونت و استایل‌های پایه کتابخانه‌ها */
+/* ==========================================================================
+   ۱. ایمپورت‌ها و متغیرهای اصلی
+   ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
-@import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
+@import 'swiper/css';
+@import 'swiper/css/pagination';
 @import 'react-datepicker/dist/react-datepicker.css';
+@import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 
-/* تعریف پالت رنگی (تم روشن) */
 :root {
-  --background-light: #f4f7fa;
-  --surface-white: #ffffff;
-  --text-primary-dark: #2c3e50;
-  --text-secondary-dark: #7f8c8d;
-  --accent-color: #34495e;
-  --border-color: #dfe4ea;
-  --success: #27ae60;
-  --danger: #e74c3c;
-  --bright-yellow: #ffdd57;
+  --text-primary-light: #ecf0f1;
+  --text-secondary-light: #a4b0be;
+  --indigo-300: #a5b4fc;
+  --indigo-400: #818cf8;
+  --blue-400: #60a5fa;
+  --green-400: #4ade80;
+  --yellow-400: #facc15;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-hover: rgba(255, 255, 255, 0.2);
+  --green-card: #e8f5e9;
+  --green-card-text: #2e7d32;
+  --blue-card: #e3f2fd;
+  --blue-card-text: #1565c0;
+  --orange-card: #fff3e0;
+  --orange-card-text: #e65100;
+  --yellow-card: #fffde7;
+  --yellow-card-text: #f57f17;
+  --bg-grad-start: #5d3df5;
+  --bg-grad-end: #2f90ff;
+  --surface: #ffffff;
+  --text-dark: #0b2030;
+  --muted: #9aa3b2;
 }
 
-/* انیمیشن */
+/* ==========================================================================
+   ۲. استایل‌های عمومی و پایه
+   ========================================================================== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- استایل‌های عمومی --- */
 body {
-  background: var(--background-light);
   font-family: 'Vazirmatn', sans-serif;
-  color: var(--text-primary-dark);
   direction: rtl;
   margin: 0;
-  padding: 20px;
-  line-height: 1.6;
-}
-
-.App {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  padding: 10px;
   min-height: 100vh;
+  padding-bottom: 100px;
+  background: linear-gradient(160deg, #1e3a8a, #5b21b6);
+  color: var(--text-primary-light);
+}
+.App {
   width: 100%;
 }
+.loading-container {
+  color: var(--text-secondary-light);
+  padding: 50px;
+  text-align: center;
+  font-size: 1.2rem;
+}
 
-/* استایل پایه برای تمام کانتینرها */
-.role-selection, 
-.quiz-container, 
-.results-container,
-.login-container,
-.okr-container,
-.main-menu-container, 
-.quiz-home-container,
-.calendar-container,
-.knowledge-container,
-.pomodoro-container {
-  background-color: var(--surface-white);
-  padding: 30px 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 900px;
-  margin-top: 40px;
+/* ==========================================================================
+   ۳. کانتینرهای عمومی صفحات (شیشه‌ای)
+   ========================================================================== */
+.role-selection, .quiz-container, .results-container, .login-container, 
+.quiz-home-container, .knowledge-container, .ai-container {
+  padding: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  max-width: 500px;
+  margin: 20px auto;
+  box-sizing: border-box;
+  animation: fadeIn 0.6s ease-out;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border-color);
-  animation: fadeIn 0.6s ease-out;
 }
-.loading-container { color: var(--text-secondary-dark); padding: 50px; text-align: center; font-size: 1.2rem; }
 
-/* --- صفحه ورود --- */
-.login-container { max-width: 500px; text-align: center; }
-.login-container h1 { color: var(--text-primary-dark); }
-.login-form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-.login-form input {
-  padding: 15px; font-size: 1rem; border-radius: 8px;
-  border: 1px solid var(--border-color); font-family: inherit; text-align: right;
+/* ==========================================================================
+   ۴. داشبورد اصلی (طراحی شیشه‌ای رنگی)
+   ========================================================================== */
+.main-menu-container {
+  padding: 20px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
 }
-.error-message { color: var(--danger); margin-top: 15px; font-weight: 500; }
-.toggle-mode { margin-top: 20px; color: var(--text-secondary-dark); }
-.toggle-mode span { color: var(--accent-color); font-weight: bold; cursor: pointer; }
+.header-welcome-text h1 {
+  margin: 0 0 5px 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--white);
+}
+.header-welcome-text p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--indigo-300);
+}
+.header-actions { display: flex; align-items: center; gap: 20px; }
+.w-12.h-12 { width: 3rem; height: 3rem; }
+.rounded-full { border-radius: 9999px; }
+.flex.items-center.justify-center { display: flex; align-items: center; justify-content: center; }
+.bg-blue-400 { background-color: var(--blue-400); }
+.text-slate-800 { color: #1e293b; }
+.font-bold { font-weight: 700; }
+.text-xl { font-size: 1.25rem; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+.progress-bar-container {
+  width: 100%;
+  height: 0.625rem;
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 9999px;
+  margin-top: 1rem;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, #4ade80, #3b82f6);
+  border-radius: 9999px;
+}
+.grid.grid-cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.gap-4 { gap: 1rem; }
+.dashboard-card {
+  border-radius: 1.5rem;
+  padding: 1rem;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+}
+.glass-card {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
+}
+.dashboard-card:hover {
+  background-color: var(--glass-hover);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.icon-wrapper {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.75rem;
+}
+.icon-wrapper i { font-size: 2rem; }
+.bg-green-500\/20 { background-color: rgba(34, 197, 94, 0.2); }
+.text-green-300 { color: #86efac; }
+.bg-blue-500\/20 { background-color: rgba(59, 130, 246, 0.2); }
+.text-blue-300 { color: #93c5fd; }
+.bg-orange-500\/20 { background-color: rgba(249, 115, 22, 0.2); }
+.text-orange-300 { color: #fdba74; }
+.bg-yellow-500\/20 { background-color: rgba(234, 179, 8, 0.2); }
+.text-yellow-300 { color: #fde047; }
+.swiper { margin-top: 2rem; height: 8rem; }
+.swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  padding: 1rem;
+}
+.swiper-pagination-bullet { background-color: rgba(255, 255, 255, 0.5); }
+.swiper-pagination-bullet-active { background-color: #fff; }
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 500px;
+  margin: 0 auto;
+  height: 5rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 100;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--indigo-300);
+  cursor: pointer;
+}
+.nav-item i { font-size: 1.8rem; }
+.nav-item:hover { color: #fff; }
+.nav-item.active { color: var(--indigo-400); }
 
-/* --- داشبورد اصلی (منوی آیکون‌ها) --- */
-.main-menu-container { padding: 20px; max-width: 800px; }
-.main-menu-header {
-  display: flex; align-items: center; gap: 20px;
-  border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 30px;
-}
-.main-menu-header .app-logo-small { max-width: 80px; height: 80px; margin-bottom: 0; flex-shrink: 0; }
-.main-menu-header div { text-align: right; }
-.main-menu-header h2 { font-size: 1.8rem; font-weight: 800; color:var(--text-primary-dark); margin:0; }
-.main-menu-header p { font-size: 0; }
-.main-menu-header p::before {
-  content: 'CoBiz | با هم بیزینس‌ت رو بهبود میدیم!';
-  font-size: 1.1rem; 
-  color: var(--text-secondary-dark);
-}
-.logout-btn-icon {
-  margin-right: auto; padding: 10px; background: transparent; border: none;
-  font-size: 1.5rem; color: var(--text-secondary-dark); cursor: pointer; transition: color 0.3s ease;
-}
-.logout-btn-icon:hover { color: var(--danger); }
-.main-menu-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 25px; text-align: center;
-}
-.menu-item {
-  background-color: var(--background-light); padding: 20px 10px; border-radius: 16px; border: 1px solid var(--border-color);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 15px; cursor: pointer; transition: all 0.3s ease;
-  font-weight: 700; font-size: 1rem; color: var(--text-primary-dark);
-}
-.menu-item:hover {
-  border-color: var(--accent-color); color: var(--accent-color);
-  transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-.menu-item-icon {
-  width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  background-color: var(--text-primary-dark); color: var(--surface-white); font-size: 2rem; flex-shrink: 0;
-}
-.menu-item.disabled { opacity: 0.5; cursor: not-allowed; color: var(--text-secondary-dark); }
-.menu-item.disabled:hover { transform: none; box-shadow: none; border-color: var(--border-color); }
-
-/* --- هدر صفحات داخلی --- */
+/* ==========================================================================
+   ۵. استایل‌های صفحات داخلی
+   ========================================================================== */
 .page-header {
-  display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
 }
-.page-header h1 { margin: 0; color: var(--text-primary-dark); }
-.back-to-dashboard-btn {
-  background-color: transparent; color: var(--accent-color); border: 1px solid var(--accent-color);
-  padding: 10px 15px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+.page-header h1 {
+  color: #fff;
 }
-.back-to-dashboard-btn:hover { background-color: var(--accent-color); color: var(--white); }
-
-/* --- داشبورد آزمون‌ها --- */
-.chart-container { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-color); }
-.results-history { margin-top: 20px; text-align: right; padding-top: 20px; }
-.results-history h3 { color: var(--text-primary-dark); margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-.results-history ul { list-style: none; padding: 0; }
-.results-history li {
-  background-color: var(--background-light); padding: 15px; border-radius: 8px; margin-bottom: 10px;
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+.back-to-dashboard-btn.minimal {
+  background: var(--glass-bg);
+  color: #fff;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(5px);
 }
-.result-scenario { font-weight: bold; }
-.result-score { font-size: 1.1rem; color: var(--accent-color); font-weight: 700; }
-.result-date, .no-results, .no-results-box span { color: var(--text-secondary-dark); }
-.no-results-box { background-color: var(--background-light); }
-.no-results-box p { color: var(--text-primary-dark); }
-
-/* --- صفحه آزمون و نتایج --- */
-.role-selection h1, .scenario-header h2, .results-container h2, .answers-review h3 { color: var(--text-primary-dark); }
-.scenario-description, .question-card h4 { color: var(--text-secondary-dark); }
-.score-circle {
-  width: 180px; height: 180px; border-radius: 50%; margin: 20px auto 40px;
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  background: conic-gradient(from 180deg, var(--accent-color), #5d6d7e, var(--accent-color));
-  color: var(--white); box-shadow: 0 0 20px rgba(0,0,0,0.1);
+.back-to-dashboard-btn.minimal:hover {
+  background: var(--glass-hover);
 }
-.score-circle p { color: var(--text-secondary-dark); font-weight: bold; }
-.score-circle span { font-size: 4rem; font-weight: 800; line-height: 1.2; }
-.answer-card { background-color: #f8f9fa; border-color: var(--border-color); }
-.rationale-correct { background-color: #f0f2f5; border-color: var(--accent-color); }
-.report-paywall { background-color: #f0f2f5; border-color: var(--accent-color); }
-.report-paywall h3 { color: var(--accent-color); }
 
-/* --- صفحه OKR --- */
-.okr-container.professional { background-color: var(--background-light); max-width: 900px; }
-.okr-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
-.tabs { background-color: var(--text-primary-dark); padding: 5px; border-radius: 10px; }
-.tabs button { color: var(--surface-white); border: none; background: transparent; }
-.tabs button.active { background-color: var(--surface-white); color: var(--text-primary-dark); }
-.objective-card { background-color: var(--surface-white); }
-.progress-donut-container span, .objective-header h2 { color: var(--text-primary-dark); }
-.kr-owner, .kr-deadline { background-color: var(--background-light); }
-.add-kr-form { background-color: #f8f9fa; }
-.add-kr-form input { background-color: var(--surface-white); }
-.modal-content input, .modal-content select { font-family: 'Vazirmatn', sans-serif; font-size: 1.1rem; padding: 15px; }
-
-/* --- صفحه تقویم --- */
-.calendar-container.modern { background-color: var(--background-light); }
-.calendar-container.modern .page-header h1, .calendar-container.modern .back-to-dashboard-btn { color: var(--text-primary-dark); }
-.daily-agenda-wrapper, .calendar-widget-wrapper.full-view, .add-event-form, .events-view { background-color: var(--surface-white); }
-.responsive-calendar { box-shadow: none !important; position: static !important; font-family: 'Vazirmatn', sans-serif !important; }
-.custom-calendar-footer-ads {
-  display: flex; justify-content: space-between; align-items: center; padding: 10px;
-  background-color: #f8f9fa; border-top: 1px solid var(--border-color);
+/* ==========================================================================
+   ۶. صفحه OKR (طراحی رنگی تایید شده)
+   ========================================================================== */
+.okr-container.v2-design {
+  background: linear-gradient(160deg, var(--bg-grad-start), var(--bg-grad-end));
+  padding: 22px !important;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 0;
+  border: none;
+  min-height: 100vh;
+  box-shadow: none;
 }
-.footer-today-styled {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 5px 20px; border-left: 2px solid var(--border-color);
+body:has(.okr-container.v2-design) {
+  padding: 0;
 }
-.footer-today-styled span { font-size: 0.9rem; color: var(--text-secondary-dark); }
-.footer-today-styled strong { font-size: 1.4rem; font-weight: 700; color: var(--accent-color); }
-.footer-ad-placeholder {
-  flex-grow: 1; height: 60px; margin-right: 15px; background-color: rgba(0,0,0,0.05);
-  border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary-dark); font-size: 0.9rem;
+.header-card-v2 {
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+  border-radius: 20px; padding: 18px; display: flex; gap: 18px;
+  align-items: center; color: #fff; box-shadow: 0 8px 30px rgba(11,24,48,0.15);
 }
-.footer-ad-placeholder::before { content: 'فضای بنر تبلیغاتی'; }
-.event-datepicker { text-align: center; cursor: pointer; }
+.avatar-v2 {
+  width: 64px; height: 64px; border-radius: 14px;
+  background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 22px;
+}
+.header-text-v2 h1 { margin: 0; font-size: 28px; color: #fff; }
+.header-text-v2 p { margin: 2px 0 0 0; color: rgba(255,255,255,0.85); }
+.quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 16px; }
+.quick {
+  padding: 18px; border-radius: 14px; color: #fff; display: flex; flex-direction: column;
+  gap: 8px; box-shadow: 0 6px 18px rgba(11,24,48,0.12); cursor: pointer;
+  border: 2px solid transparent; transition: all 0.3s ease;
+}
+.quick:hover, .quick.active { border-color: rgba(255,255,255,0.7); }
+.quick .title { font-weight: 700; font-size: 18px; }
+.quick .sub { font-size: 13px; opacity: 0.95; }
+.q-blue { background: linear-gradient(180deg,#3b82f6,#2f6df0); }
+.q-teal { background: linear-gradient(180deg,#27b5a8,#1ea39a); }
+.q-orange { background: linear-gradient(180deg,#ff8a5b,#ff7a43); }
+.q-yellow { background: linear-gradient(180deg,#f4bf4f,#f2b33a); }
+.main-v2 {
+  margin-top: 18px; display: grid; grid-template-columns: 420px 1fr;
+  gap: 20px; align-items: flex-start;
+}
+.left-panel-v2, .right-panel-v2 {
+  border-radius: 16px; padding: 18px; box-shadow: 0 10px 28px rgba(11,24,48,0.08);
+}
+.left-panel-v2 { background: var(--surface); color: var(--text-dark); }
+.right-panel-v2 { background: linear-gradient(180deg,#ffffff, #fbfcff); color: var(--text-dark); }
+.okr-summary { text-align: center; }
+.okr-summary h3 { margin: 0 0 6px 0; color: var(--text-dark); }
+.okr-small { color: var(--muted); font-size: 13px; }
+.gauge-wrap { display: flex; justify-content: center; }
+.gauge { width: 100%; max-width: 320px; position: relative; }
+.gauge svg { width: 100%; }
+.gauge .pct {
+  position: absolute; bottom: 10%; left: 50%;
+  transform: translateX(-50%); font-weight: 800; font-size: 2rem; color: var(--text-dark);
+}
+.actions { display: flex; gap: 8px; margin-top: 10px; justify-content: center; }
+.btn {
+  background: var(--bg-grad-end); color: #fff; padding: 10px 18px; border-radius: 10px;
+  border: 0; cursor: pointer; font-weight: 700; font-family: 'Vazirmatn', sans-serif;
+  box-shadow: 0 6px 18px rgba(47,144,255,0.18);
+}
+.btn.ghost { background: transparent; color: var(--text-dark); border: 1px solid #e6e9ee; box-shadow: none; }
+.panel-header { display: flex; justify-content: space-between; align-items: center; }
+.panel-header h2, .obj-head h3, .kr .kr-title, .modal-v2 h4 { color: var(--text-dark); }
+.objs { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+.obj-card {
+  background: #fff; border-radius: 12px; padding: 12px; border: 1px solid #eef2f7;
+  box-shadow: 0 6px 20px rgba(11,24,48,0.04);
+}
+.obj-head { display: flex; justify-content: space-between; align-items: center; }
+.obj-meta { font-size: 13px; color: var(--muted); }
+.krs { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.kr {
+  display: flex; gap: 12px; align-items: center; padding: 8px; border-radius: 10px;
+  background: linear-gradient(90deg, #f7fbff, #ffffff); border: 1px solid #eef6ff;
+}
+.kr .kr-left { flex: 1; }
+.kr .kr-meta { font-size: 12px; color: var(--muted); }
+.kr .kr-actions { display: flex; gap: 8px; align-items: center; }
+input[type="range"] { flex: 1; }
+.add-kr-inline-form { display: flex; gap: 8px; margin-top: 10px; }
+.small-input { border:1px solid #e6ecf5;padding:6px 8px;border-radius:8px;background:#fff;font-size:13px; }
+.modal-backdrop-v2 {
+  position: fixed; inset: 0; background: rgba(3,8,15,0.45); display: flex;
+  align-items: center; justify-content: center; z-index: 1200;
+}
+.modal-v2 {
+  width: 420px; max-width: 94%; background: #fff; color: var(--text-dark);
+  border-radius: 12px; padding: 16px;
+}
+.form-row { margin-bottom: 8px; }
+.form-row input, .form-row textarea, .modal-v2 textarea {
+  width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px;
+  border: 1px solid #e7eef8; font-size: 14px; font-family: 'Vazirmatn', sans-serif;
+}
 
-/* --- کتابخانه دانش --- */
-.knowledge-container { background-color: var(--background-light); }
-.format-card, .knowledge-filters.secondary, .article-card { background-color: var(--surface-white); }
-.format-card i { color: var(--accent-color); }
-.format-card.active { background-color: var(--accent-color); color: var(--white); border-color: var(--accent-color); }
-.format-card.active i { color: var(--white); }
-.category-filter select, .search-bar input { background-color: var(--background-light); }
-.article-card h3 { color: var(--accent-color); }
-.tag { background-color: var(--background-light); }
+/* ==========================================================================
+   ۷. صفحه تقویم و پومودورو (طراحی شیشه‌ای تایید شده)
+   ========================================================================== */
+.calendar-container, .pomodoro-container {
+  max-width: 550px;
+}
+.pomodoro-header { text-align: center; margin-bottom: 30px; color: #fff; }
+.pomodoro-header h1 { font-weight: 800; font-size: 2.5rem; }
+.pomodoro-header p { color: var(--indigo-300); }
+.pomodoro-card {
+  background: var(--glass-bg); backdrop-filter: blur(10px);
+  border-radius: 24px; padding: 25px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+}
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+.calendar-day {
+  transition: all 0.2s ease-in-out; height: 40px; display: flex;
+  align-items: center; justify-content: center; border-radius: 9999px; cursor: pointer;
+}
+.calendar-day:not(.empty):hover { background-color: var(--glass-hover); transform: scale(1.05); }
+.calendar-day.selected {
+  background-color: #a78bfa; color: #1e293b; font-weight: bold;
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
+}
+.calendar-day.today { background-color: var(--blue-400); color: #1e293b; }
+.calendar-day.has-event::after {
+  content: ''; position: absolute; bottom: 4px; left: 50%;
+  transform: translateX(-50%); width: 6px; height: 6px;
+  border-radius: 50%; background-color: var(--yellow-400);
+}
+.timer-display-wrapper { position: relative; width: 256px; height: 256px; margin: 0 auto 25px; }
+.timer-svg { width: 100%; height: 100%; }
+.timer-circle-bg { stroke: rgba(255, 255, 255, 0.2); stroke-width: 8; fill: none; }
+.timer-circle-progress {
+  stroke-width: 8; fill: none; stroke-linecap: round;
+  transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.5s linear;
+}
+.timer-text-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.timer-time { font-size: 3.5rem; font-weight: 800; letter-spacing: 0.1em; color: #fff; }
+.timer-mode-text { font-size: 1rem; color: var(--indigo-300); margin-top: 5px; }
+.pomodoro-controls { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 30px; }
+.start-pause-btn {
+  background: var(--green-400); color: var(--text-dark); font-weight: bold; width: 160px;
+  padding: 12px 0; border-radius: 9999px; transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4); display: flex;
+  align-items: center; justify-content: center; gap: 8px; font-size: 1.1rem;
+}
+.start-pause-btn:hover { background-color: #36b36a; }
+.reset-btn { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 9999px; transition: all 0.3s ease; font-size: 1.2rem; color: #fff; }
+.reset-btn:hover { background: rgba(255,255,255,0.2); }
+.mode-selection { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
+.mode-button {
+  flex: 1; background: rgba(255,255,255,0.05); transition: all 0.3s ease;
+  border-radius: 12px; padding: 12px; text-align: center; border: 1px solid transparent; color: #fff;
+}
+.mode-button:hover { background: rgba(255,255,255,0.2); }
+.mode-button.active {
+  background: rgba(255,255,255,0.15); box-shadow: 0 0 15px rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.pomodoro-stats { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px; }
+.pomodoro-stats h3 { text-align: center; font-weight: bold; margin: 0 0 12px 0; color: #c7d2fe; }
+.stats-grid { display: flex; justify-content: space-around; text-align: center; }
+.stats-value { font-size: 1.5rem; font-weight: 800; color: #fff; }
+.stats-label { font-size: 0.8rem; color: var(--indigo-300); }
 
-/* --- تایمر پومودورو (طراحی اولیه روشن) --- */
-.pomodoro-container { max-width: 500px; margin: 40px auto; background: transparent; border: none; box-shadow: none; }
-.timer-card { background-color: var(--surface-white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-.timer-modes { display: flex; justify-content: center; gap: 10px; background-color: var(--background-light); padding: 5px; border-radius: 10px; margin-bottom: 30px; }
-.timer-modes button { flex-grow: 1; border: none; background-color: transparent; color: var(--text-secondary-dark); font-weight: 700; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
-.timer-modes button.active { background-color: var(--surface-white); color: var(--text-primary-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.timer-display { font-size: 7rem; font-weight: 800; color: var(--text-primary-dark); margin: 20px 0; }
-.timer-controls { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-.control-btn { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; padding: 12px 25px; border: 2px solid var(--border-color); background-color: transparent; }
-.control-btn.main { background-color: var(--text-primary-dark); border-color: var(--text-primary-dark); color: var(--white); font-size: 1.3rem; padding: 15px 35px; }
-
-/* --- دستیار AI (طراحی اولیه روشن) --- */
-.ai-container { max-width: 800px; background-color: var(--background-light); }
-.chat-window { background-color: var(--surface-white); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 60vh; }
-.chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-.message { padding: 12px 18px; border-radius: 20px; max-width: 80%; line-height: 1.6; }
-.message.user { background-color: var(--text-primary-dark); color: var(--white); align-self: flex-start; border-bottom-left-radius: 5px; }
-.message.ai { background-color: var(--background-light); color: var(--text-primary-dark); align-self: flex-end; border-bottom-right-radius: 5px; }
-.chat-input-form { display: flex; padding: 15px; border-top: 1px solid var(--border-color); }
-.chat-input-form input { flex-grow: 1; border: none; background: transparent; padding: 10px; font-size: 1rem; font-family: inherit; }
-.chat-input-form button { background: var(--text-primary-dark); color: var(--white); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.2rem; padding: 0; }
-
-/* --- استایل‌های عمومی دکمه‌ها و عناصر دیگر --- */
-button { cursor: pointer; border-radius: 8px; border: 1px solid transparent; padding: 0.8em 1.2em; font-size: 1em; font-weight: 700; font-family: inherit; transition: all 0.3s ease; }
-.options button { background-color: var(--surface-white); border-color: var(--border-color); color: var(--text-primary-dark); }
-.options button:hover { border-color: var(--accent-color); background-color: var(--accent-color); color: var(--white); }
-.login-form button, .role-buttons button { background-color: var(--text-primary-dark); color: var(--surface-white); }
-.start-quiz-btn { background-color: var(--success); color: white; border:none; }
-.logout-btn:hover { text-decoration: underline; color: var(--danger); }
-.unlock-button { background-color: var(--success); color: var(--white); border: none; }
-.btn-primary { background-color: var(--accent-color); color: var(--white); border: none; }
-.btn-secondary { background-color: var(--border-color); }
-
-/* --- مودال --- */
-.modal-overlay { z-index: 1000; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; }
-.modal-content { background: var(--surface-white); color: var(--text-primary-dark); }
-.modal-content h2 { color: var(--text-primary-dark); }
-.modal-content input, .modal-content select { background-color: var(--background-light); }
-
-/* --- کدهای ریسپانسیو --- */
+/* ==========================================================================
+   ۸. ریسپانسیو
+   ========================================================================== */
+@media (max-width: 980px) {
+  .main-v2 { grid-template-columns: 1fr; }
+  .left-panel-v2 { order: 2; }
+}
 @media (max-width: 768px) {
-  body { padding: 5px; }
-  .main-menu-container, .calendar-container, .okr-container, .knowledge-container, .pomodoro-container { padding: 15px; margin-top: 15px; }
-  .main-menu-header, .okr-header, .page-header { flex-direction: column; gap: 15px; text-align: center; }
-  .main-menu-grid, .format-cards-grid { grid-template-columns: repeat(2, 1fr); }
-  .calendar-layout.final, .input-forms-section { grid-template-columns: 1fr; }
+  /* .dashboard-grid { grid-template-columns: 1fr; } */
+  .page-header { flex-direction: column; gap: 15px; }
+} /* <-- The brace now correctly closes the entire media query block */
+/* src/App.css - استایل‌های صفحه رتبه‌بندی */
+
+.leaderboard-link-btn {
+  background-color: var(--indigo-400);
+  color: #fff;
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
+.leaderboard-link-btn:hover {
+  background-color: #6366f1; /* indigo-500 */
+}
+
+.leaderboard-container {
+  max-width: 600px;
+}
+.leaderboard-description {
+  text-align: center;
+  color: var(--text-secondary-light);
+  margin: -10px 0 30px 0;
+}
+.leaderboard-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.leaderboard-header, .leaderboard-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 100px;
+  align-items: center;
+  padding: 15px;
+  text-align: right;
+}
+.leaderboard-header {
+  color: var(--text-secondary-light);
+  font-weight: bold;
+  border-bottom: 2px solid var(--glass-border);
+}
+.leaderboard-row {
+  background: var(--glass-bg);
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
+}
+.leaderboard-row:hover {
+  background: var(--glass-hover);
+}
+.leaderboard-row.current-user {
+  background: rgba(167, 139, 250, 0.2); /* violet-400 transparent */
+  border: 1px solid #a78bfa;
+  font-weight: bold;
+}
+.leaderboard-row .rank {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.leaderboard-row .name {
+  font-size: 1.1rem;
+}
+.leaderboard-row .score {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: left;
+}/* src/App.css - استایل‌های صفحه نقد و بررسی */
+
+.review-home-container {
+  max-width: 600px;
+}
+.page-description {
+  text-align: center;
+  color: var(--indigo-300);
+  margin: -10px 0 30px 0;
+}
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.category-card {
+  padding: 25px;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+}
+.category-card:hover {
+  background: var(--glass-hover);
+  transform: translateY(-5px);
+}
+.category-card h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+.category-card p {
+  margin: 0;
+  color: var(--indigo-300);
+}/* src/App.css - استایل‌های صفحه جزئیات نقد و بررسی */
+
+.review-detail-container { max-width: 700px; }
+.review-header { display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; }
+.product-logo { width: 80px; height: 80px; border-radius: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.header-info h1 { margin: 0; font-size: 2rem; font-weight: 800; color: #fff; }
+.product-summary { color: var(--indigo-300); margin: 0.25rem 0 0.5rem 0; }
+.rating-wrapper { display: flex; align-items: center; gap: 0.5rem; }
+.rating-star { color: #facc15; }
+.back-button.minimal { margin-right: auto; align-self: flex-start; }
+.review-content { display: flex; flex-direction: column; gap: 1.5rem; }
+.pros-cons-title { font-weight: bold; font-size: 1.125rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+.pros-cons-list { list-style: none; padding: 0; space-y: 0.5rem; font-size: 0.875rem; }
+.pros-cons-list li { display: flex; align-items: flex-start; gap: 0.5rem; }
+.pros-cons-list li span { margin-top: 0.25rem; }
+.text-green-400 { color: #4ade80; }
+.text-red-400 { color: #f87171; }
+table { width: 100%; text-align: center; }
+thead { border-bottom: 1px solid rgba(255,255,255,0.2); }
+tbody tr { border-bottom: 1px solid rgba(255,255,255,0.1); }
+tbody tr:last-child { border-bottom: none; }
+th, td { padding: 0.75rem; }
+/* src/App.css - استایل‌های صفحه قیمت‌های بازار */
+
+.price-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+  margin-top: 20px;
+}
+.price-card {
+  background-color: var(--glass-bg);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.price-card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  color: #fff;
+}
+.price-card-header.gold { background: linear-gradient(45deg, #f7971e, #ffd200); }
+.price-card-header.currency { background: linear-gradient(45deg, #1d976c, #93f9b9); }
+.price-card-header i { font-size: 1.8rem; }
+.price-card-header h3 { margin: 0; font-size: 1.3rem; font-weight: 700; }
+
+.price-card-body {
+  padding: 10px 20px 20px 20px;
+}
+.price-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 15px;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 1rem;
+}
+.price-row:not(:last-child) {
+  border-bottom: 1px solid var(--glass-border);
+}
+.item-name {
+  font-weight: 500;
+}
+.item-price {
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+.item-change {
+  font-weight: bold;
+  direction: ltr;
+  text-align: right;
+  width: 80px;
+}
+.item-change.positive { color: #4ade80; }
+.item-change.negative { color: #f87171; }
+
+/* رنگ‌بندی برای آیکون جدید در داشبورد */
+.bg-indigo-500\/20 { background-color: rgba(99, 102, 241, 0.2); }
+.text-indigo-300 { color: #a5b4fc; }
+/* src/App.css - استایل‌های صفحه اخبار */
+
+.category-filters {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 30px 0;
+  overflow-x: auto; /* برای اسکرول در موبایل */
+  padding-bottom: 10px;
+}
+.filter-chip {
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary-light);
+  cursor: pointer;
+  white-space: nowrap; /* جلوگیری از شکستن متن */
+}
+.filter-chip.active, .filter-chip:hover {
+  background: var(--glass-hover);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.news-card {
+  padding: 20px;
+  border-radius: 16px;
+}
+.news-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #fff;
+}
+.news-card p {
+  margin: 0 0 15px 0;
+  color: var(--text-secondary-light);
+}
+.news-card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--indigo-300);
+  padding-top: 15px;
+  border-top: 1px solid var(--glass-border);
+}
+
+/* رنگ‌بندی برای آیکون جدید در داشبورد */
+.bg-red-500\/20 { background-color: rgba(239, 68, 68, 0.2); }
+.text-red-300 { color: #fca5a5; }

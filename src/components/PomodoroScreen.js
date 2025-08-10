@@ -1,107 +1,124 @@
 // src/components/PomodoroScreen.js
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import moment from 'moment-jalaali';
 
-const WORK_MINUTES = 25;
-const SHORT_BREAK_MINUTES = 5;
-const LONG_BREAK_MINUTES = 15;
+const MODES = {
+  work: { time: 25 * 60, name: 'تمرکز', color: '#4ade80' },
+  shortBreak: { time: 5 * 60, name: 'استراحت کوتاه', color: '#60a5fa' },
+  longBreak: { time: 15 * 60, name: 'استراحت طولانی', color: '#facc15' }
+};
+const POINTS_PER_CYCLE = 10;
+const GOAL = 4;
 
-function PomodoroScreen({ onGoToDashboard }) {
-  const [minutes, setMinutes] = useState(WORK_MINUTES);
-  const [seconds, setSeconds] = useState(0);
+function PomodoroScreen({ user, onUpdateUser, onGoToDashboard }) {
+  // ... تمام منطق و state های کامپوننت بدون تغییر باقی می‌ماند ...
+  const [mode, setMode] = useState('work');
+  const [timeLeft, setTimeLeft] = useState(MODES[mode].time);
   const [isActive, setIsActive] = useState(false);
-  const [mode, setMode] = useState('work'); // work | shortBreak | longBreak
-  const [pomodoroCount, setPomodoroCount] = useState(0);
-
-  // رفرنس به فایل صوتی
   const audioRef = useRef(null);
+  const todayString = moment().format('jYYYY-jM-jD');
+  const pomodoroStats = useMemo(() => user.pomodoroStats || { dailyCycles: {}, totalPoints: 0 }, [user]);
+  const todaysCycles = pomodoroStats.dailyCycles[todayString] || 0;
 
   useEffect(() => {
     let interval = null;
-
-    if (isActive) {
+    if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
-        if (seconds === 0) {
-          if (minutes === 0) {
-            // زمان تمام شد
-            audioRef.current.play();
-            if (mode === 'work') {
-              const newPomodoroCount = pomodoroCount + 1;
-              setPomodoroCount(newPomodoroCount);
-              // بعد از ۴ پومودورو، استراحت طولانی
-              switchMode(newPomodoroCount % 4 === 0 ? 'longBreak' : 'shortBreak');
-            } else {
-              switchMode('work');
-            }
-          } else {
-            setMinutes(minutes - 1);
-            setSeconds(59);
-          }
-        } else {
-          setSeconds(seconds - 1);
-        }
+        setTimeLeft(prev => prev - 1);
       }, 1000);
-    } else {
-      clearInterval(interval);
+    } else if (isActive && timeLeft === 0) {
+      audioRef.current.play().catch(e => console.log("Audio play failed."));
+      if (mode === 'work') {
+        const newCycleCount = todaysCycles + 1;
+        const newTotalPoints = pomodoroStats.totalPoints + POINTS_PER_CYCLE;
+        const updatedStats = {
+          ...pomodoroStats,
+          dailyCycles: { ...pomodoroStats.dailyCycles, [todayString]: newCycleCount },
+          totalPoints: newTotalPoints
+        };
+        onUpdateUser({ ...user, pomodoroStats: updatedStats });
+        switchMode(newCycleCount % GOAL === 0 ? 'longBreak' : 'shortBreak');
+      } else {
+        switchMode('work');
+      }
     }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft]);
 
-    return () => clearInterval(interval); // پاکسازی در زمان unmount
-  }, [isActive, seconds, minutes, mode, pomodoroCount]);
-  
-  const toggleTimer = () => {
-    setIsActive(!isActive);
-  };
-
-  const resetTimer = () => {
-    setIsActive(false);
-    switchMode(mode);
-  };
-  
   const switchMode = (newMode) => {
     setIsActive(false);
     setMode(newMode);
-    if (newMode === 'work') {
-      setMinutes(WORK_MINUTES);
-    } else if (newMode === 'shortBreak') {
-      setMinutes(SHORT_BREAK_MINUTES);
-    } else {
-      setMinutes(LONG_BREAK_MINUTES);
-    }
-    setSeconds(0);
+    setTimeLeft(MODES[newMode].time);
   };
   
-  // فرمت کردن زمان برای نمایش دو رقمی
-  const formatTime = (time) => time < 10 ? `0${time}` : time;
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const progress = (MODES[mode].time - timeLeft) / MODES[mode].time;
+  const circumference = 54 * 2 * Math.PI;
+  const offset = circumference * (1 - progress);
 
   return (
-    <div className="pomodoro-container">
-      <div className="page-header">
-        <h1>تایمر پومودورو</h1>
-        <button onClick={onGoToDashboard} className="back-to-dashboard-btn">
-          <i className="fa-solid fa-arrow-right"></i> بازگشت به منوی اصلی
-        </button>
-      </div>
-      <div className="timer-card">
-        <div className="timer-modes">
-          <button className={mode === 'work' ? 'active' : ''} onClick={() => switchMode('work')}>تمرکز</button>
-          <button className={mode === 'shortBreak' ? 'active' : ''} onClick={() => switchMode('shortBreak')}>استراحت کوتاه</button>
-          <button className={mode === 'longBreak' ? 'active' : ''} onClick={() => switchMode('longBreak')}>استراحت طولانی</button>
-        </div>
-        <div className="timer-display">
-          <span>{formatTime(minutes)}</span>:<span>{formatTime(seconds)}</span>
-        </div>
-        <div className="timer-controls">
-          <button className="control-btn main" onClick={toggleTimer}>
-            {isActive ? <i className="fa-solid fa-pause"></i> : <i className="fa-solid fa-play"></i>}
-            {isActive ? 'توقف' : 'شروع'}
-          </button>
-          <button className="control-btn" onClick={resetTimer}>
-            <i className="fa-solid fa-rotate-right"></i>
-            ریست
+    <div className="pomodoro-container v3-design">
+        {/* --- هدر و دکمه بازگشت اینجا اضافه شد --- */}
+        <div className="page-header pomodoro-page-header">
+          <h1>تایمر پومودورو</h1>
+          <button onClick={onGoToDashboard} className="back-to-dashboard-btn">
+              <i className="fa-solid fa-arrow-right"></i> بازگشت
           </button>
         </div>
-      </div>
-      <audio ref={audioRef} src="/ring.mp3" />
+
+        <main className="pomodoro-card">
+            <div className="timer-display-wrapper">
+                <svg className="timer-svg" viewBox="0 0 120 120">
+                    <circle className="timer-circle-bg" cx="60" cy="60" r="54" />
+                    <circle className="timer-circle-progress" cx="60" cy="60" r="54" 
+                        strokeDasharray={circumference} 
+                        strokeDashoffset={offset}
+                        style={{ stroke: MODES[mode].color }}
+                    />
+                </svg>
+                <div className="timer-text-content">
+                    <span className="timer-time">{formatTime(timeLeft)}</span>
+                    <span className="timer-mode-text">{MODES[mode].name}</span>
+                </div>
+            </div>
+
+            <div className="pomodoro-controls">
+                <button className="reset-btn" onClick={() => switchMode(mode)}>
+                    <i className="fa-solid fa-rotate-right"></i>
+                </button>
+                <button className="start-pause-btn" onClick={() => setIsActive(!isActive)}>
+                    {isActive ? <i className="fa-solid fa-pause"></i> : <i className="fa-solid fa-play"></i>}
+                    <span>{isActive ? 'توقف' : 'شروع'}</span>
+                </button>
+            </div>
+
+            <div className="mode-selection">
+                <button className={`mode-button ${mode === 'work' ? 'active' : ''}`} onClick={() => switchMode('work')}>تمرکز</button>
+                <button className={`mode-button ${mode === 'shortBreak' ? 'active' : ''}`} onClick={() => switchMode('shortBreak')}>استراحت کوتاه</button>
+                <button className={`mode-button ${mode === 'longBreak' ? 'active' : ''}`} onClick={() => switchMode('longBreak')}>استراحت طولانی</button>
+            </div>
+
+            <div className="pomodoro-stats">
+                <h3>آمار امروز</h3>
+                <div className="stats-grid">
+                    <div>
+                        <p className="stats-value">{todaysCycles}</p>
+                        <p className="stats-label">دوره‌های تکمیل شده</p>
+                    </div>
+                    <div>
+                        <p className="stats-value">{todaysCycles * POINTS_PER_CYCLE}</p>
+                        <p className="stats-label">امتیاز کسب شده</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <audio ref={audioRef} src="/ring.mp3" />
     </div>
   );
 }

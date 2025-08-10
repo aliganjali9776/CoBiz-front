@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { quizId, quizData } from './QuizData'; 
+import { reviewsData } from './data/reviewsData';
 import LoginScreen from './components/LoginScreen';
 import DashboardScreen from './components/DashboardScreen';
 import RoleSelectionScreen from './components/RoleSelectionScreen';
@@ -12,10 +13,12 @@ import QuizHomeScreen from './components/QuizHomeScreen';
 import CalendarScreen from './components/CalendarScreen';
 import KnowledgeScreen from './components/KnowledgeScreen';
 import AIScreen from './components/AIScreen';
-import PomodoroScreen from './components/PomodoroScreen'; // eslint-disable-line no-unused-vars
+import PomodoroScreen from './components/PomodoroScreen';
+import ReviewHomeScreen from './components/ReviewHomeScreen';
+import ReviewDetailScreen from './components/ReviewDetailScreen';
+import PricesScreen from './components/PricesScreen';
+import NewsScreen from './components/NewsScreen'; // ایمپورت کامپوننت جدید
 import './App.css';
-
-const BACKEND_URL = 'https://cobiz.onrender.com';
 
 const shuffleArray = (array) => {
   const newArray = [...array];
@@ -35,36 +38,28 @@ function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState([]);
   const [hasUnlockedReport, setHasUnlockedReport] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
 
   useEffect(() => {
     const loggedInUserPhone = localStorage.getItem('loggedInUser');
     if (loggedInUserPhone) {
-      const fetchUser = async () => {
-        try {
-          const response = await fetch(`${BACKEND_URL}/api/users/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: loggedInUserPhone }),
-          });
-          const userData = await response.json();
-          if (response.ok) {
-            setCurrentUser(userData);
-            setAppState('dashboard');
-          } else {
-            handleLogout();
-          }
-        } catch (error) {
-          console.error("Failed to fetch user on load:", error);
-          handleLogout();
-        }
-      };
-      fetchUser();
+      const userData = JSON.parse(localStorage.getItem(loggedInUserPhone));
+      if (userData) {
+        setCurrentUser(userData);
+        setAppState('dashboard');
+      }
     }
   }, []);
 
   const handleLogin = (userFromBackend) => {
-    setCurrentUser(userFromBackend);
-    localStorage.setItem('loggedInUser', userFromBackend.phone);
+    let user = { ...userFromBackend };
+    if (!user.okrsData) user.okrsData = { yearly: [], quarterly: [], monthly: [] };
+    if (!user.calendarEvents) user.calendarEvents = [];
+    if (!user.pomodoroStats) user.pomodoroStats = { dailyCycles: {}, totalPoints: 0 };
+    if (!user.results) user.results = {};
+    setCurrentUser(user);
+    localStorage.setItem('loggedInUser', user.phone);
+    localStorage.setItem(user.phone, JSON.stringify(user));
     setAppState('dashboard');
   };
 
@@ -90,22 +85,26 @@ function App() {
   const handleGoToKnowledge = () => setAppState('knowledge');
   const handleGoToAI = () => setAppState('ai_assistant');
   const handleGoToPomodoro = () => setAppState('pomodoro');
+  const handleGoToReviews = () => setAppState('reviews_home');
+  const handleGoToPrices = () => setAppState('prices');
+  const handleGoToNews = () => setAppState('news'); // تابع جدید
   
-  const handleUpdateUser = async (updatedUser) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/users/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedUser),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'خطا در آپدیت کاربر.');
-      }
-      setCurrentUser(data);
-    } catch (error) {
-      console.error("خطا در آپدیت کاربر:", error);
+  const handleSelectReviewCategory = (category) => {
+    const productToShow = reviewsData[category]?.[0];
+    if (productToShow) {
+      setSelectedReview(productToShow);
+      setAppState('review_detail');
     }
+  };
+  
+  const handleGoToReviewsHome = () => {
+      setSelectedReview(null);
+      setAppState('reviews_home');
+  }
+
+  const handleUpdateUser = (updatedUser) => {
+    setCurrentUser(updatedUser);
+    localStorage.setItem(updatedUser.phone, JSON.stringify(updatedUser));
   };
   
   const handleRoleSelect = (roleKey) => {
@@ -126,13 +125,14 @@ function App() {
       const maxScore = currentScenario.questions.length * 10;
       const percentage = maxScore > 0 ? (userScore / maxScore) * 100 : 0;
       const newResult = {
-        quizId, scenarioTitle: currentScenario.title,
-        percentage, date: new Date().toISOString(),
+        quizId,
+        scenarioTitle: currentScenario.title,
+        percentage,
+        date: new Date().toISOString(),
       };
       const updatedUser = { ...currentUser };
-      if (!updatedUser.results[quizId]) {
-        updatedUser.results[quizId] = [];
-      }
+      if (!updatedUser.results) { updatedUser.results = {}; }
+      if (!updatedUser.results[quizId]) { updatedUser.results[quizId] = []; }
       updatedUser.results[quizId].push(newResult);
       handleUpdateUser(updatedUser);
       setAppState('results');
@@ -140,32 +140,75 @@ function App() {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
-  
+
   const handleUnlockReport = () => setHasUnlockedReport(true);
 
-  switch (appState) {
-    case 'dashboard':
-      return <DashboardScreen user={currentUser} onGoToQuizHome={handleGoToQuizHome} onGoToOKR={handleGoToOKR} onGoToCalendar={handleGoToCalendar} onGoToKnowledge={handleGoToKnowledge} onGoToAI={handleGoToAI} onGoToPomodoro={handleGoToPomodoro} onLogout={handleLogout} />;
-    case 'quiz_home':
-      return <QuizHomeScreen user={currentUser} onStartNewQuiz={handleStartNewQuiz} onGoToDashboard={handleGoToDashboard} />;
-    case 'okr':
-      return <OKRScreen user={currentUser} onUpdateUser={handleUpdateUser} onGoToDashboard={handleGoToDashboard} />;
-    case 'calendar':
-      return <CalendarScreen user={currentUser} onUpdateUser={handleUpdateUser} onGoToDashboard={handleGoToDashboard} />;
-    case 'knowledge':
-      return <KnowledgeScreen onGoToDashboard={handleGoToDashboard} />;
-    case 'ai_assistant':
-      return <AIScreen onGoToDashboard={handleGoToDashboard} />;
-    case 'role_selection':
-      return <RoleSelectionScreen onRoleSelect={handleRoleSelect} />;
-    case 'quiz':
-      return <QuizScreen selectedRole={selectedRole} currentScenario={currentScenario} currentQuestionIndex={currentQuestionIndex} onAnswerSelect={handleAnswerSelect} />;
-    case 'results':
-      return <ResultsScreen selectedRole={selectedRole} currentScenario={currentScenario} userAnswers={userAnswers} onRestart={handleGoToQuizHome} hasUnlockedReport={hasUnlockedReport} onUnlockReport={handleUnlockReport} />;
-    case 'login':
-    default:
-      return <LoginScreen onLogin={handleLogin} />;
-  }
+  const renderContent = () => {
+    switch (appState) {
+      case 'dashboard':
+        return <DashboardScreen 
+                  user={currentUser} 
+                  onGoToQuizHome={handleGoToQuizHome} 
+                  onGoToOKR={handleGoToOKR} 
+                  onGoToCalendar={handleGoToCalendar} 
+                  onGoToKnowledge={handleGoToKnowledge} 
+                  onGoToAI={handleGoToAI} 
+                  onGoToPomodoro={handleGoToPomodoro}
+                  onGoToReviews={handleGoToReviews}
+                  onGoToPrices={handleGoToPrices}
+                  onGoToNews={handleGoToNews}
+                  onLogout={handleLogout}
+                  onGoToDashboard={handleGoToDashboard} 
+               />;
+      case 'quiz_home':
+        return <QuizHomeScreen user={currentUser} onStartNewQuiz={handleStartNewQuiz} onGoToDashboard={handleGoToDashboard} onGoToLeaderboard={()=>{}} />;
+      case 'okr':
+        return <OKRScreen user={currentUser} onUpdateUser={handleUpdateUser} onGoToDashboard={handleGoToDashboard} />;
+      case 'calendar':
+        return <CalendarScreen user={currentUser} onUpdateUser={handleUpdateUser} onGoToDashboard={handleGoToDashboard} />;
+      case 'knowledge':
+        return <KnowledgeScreen onGoToDashboard={handleGoToDashboard} />;
+      case 'ai_assistant':
+        return <AIScreen onGoToDashboard={handleGoToDashboard} />;
+      case 'pomodoro':
+        return <PomodoroScreen user={currentUser} onUpdateUser={handleUpdateUser} onGoToDashboard={handleGoToDashboard} />;
+      case 'reviews_home':
+        return <ReviewHomeScreen onGoToDashboard={handleGoToDashboard} onSelectCategory={handleSelectReviewCategory} />;
+      case 'review_detail':
+        return <ReviewDetailScreen review={selectedReview} onGoBack={handleGoToReviewsHome} />;
+      case 'prices':
+        return <PricesScreen onGoToDashboard={handleGoToDashboard} />;
+      case 'news':
+        return <NewsScreen onGoToDashboard={handleGoToDashboard} />;
+      case 'role_selection':
+        return <RoleSelectionScreen onRoleSelect={handleRoleSelect} />;
+      case 'quiz':
+        return <QuizScreen 
+                  selectedRole={selectedRole} 
+                  currentScenario={currentScenario} 
+                  currentQuestionIndex={currentQuestionIndex} 
+                  onAnswerSelect={handleAnswerSelect} 
+               />;
+      case 'results':
+        return <ResultsScreen 
+                  selectedRole={selectedRole}
+                  currentScenario={currentScenario}
+                  userAnswers={userAnswers}
+                  onRestart={handleGoToQuizHome} 
+                  hasUnlockedReport={hasUnlockedReport}
+                  onUnlockReport={handleUnlockReport}
+               />;
+      case 'login':
+      default:
+        return <LoginScreen onLogin={handleLogin} />;
+    }
+  };
+
+  return (
+    <div className="App">
+      {renderContent()}
+    </div>
+  );
 }
 
 export default App;

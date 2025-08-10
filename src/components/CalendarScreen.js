@@ -3,13 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Calendar from '@hassanmojab/react-modern-calendar-datepicker';
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
-// import DatePicker from 'react-datepicker'; // این خط حذف شد چون DatePicker از react-datepicker استفاده نشده بود
-import "react-datepicker/dist/react-datepicker.css";
-import { faIR } from 'date-fns/locale';
 import moment from 'moment-jalaali';
-import { registerLocale } from 'react-datepicker';
-
-registerLocale('fa', faIR);
 
 const toCalendarDay = (dateString) => {
   if (!dateString) return null;
@@ -22,50 +16,15 @@ const toCalendarDay = (dateString) => {
   };
 };
 
-const DatePickerInput = ({ selectedDate, setSelectedDate }) => {
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const selectedDayObject = toCalendarDay(selectedDate.toISOString());
-
-  const handleDateChange = (day) => {
-    const newDate = new Date(moment(`${day.year}/${day.month}/${day.day}`, 'jYYYY/jM/jD').toString());
-    setSelectedDate(newDate);
-    setIsPickerOpen(false);
-  };
-
-  return (
-    <div className="custom-datepicker-wrapper">
-      <input
-        type="text"
-        readOnly
-        className="event-datepicker-input"
-        value={new Date(selectedDate).toLocaleDateString('fa-IR')}
-        onClick={() => setIsPickerOpen(!isPickerOpen)}
-        placeholder="انتخاب تاریخ"
-      />
-      {isPickerOpen && (
-        <div className="datepicker-calendar-container">
-          <Calendar
-            value={selectedDayObject}
-            onChange={handleDateChange}
-            shouldHighlightWeekends
-            locale="fa"
-          />
-        </div>
-      )}
-    </div>
-  );
-};
-
 function CalendarScreen({ user, onUpdateUser, onGoToDashboard }) {
-  // --- All Hooks moved to the top level ---
-  const [selectedDay, setSelectedDay] = useState(toCalendarDay(new Date().toISOString()));
-  const [newTask, setNewTask] = useState('');
-  const [newTaskDate, setNewTaskDate] = useState(new Date());
-  const [newMeeting, setNewMeeting] = useState('');
-  const [newMeetingDate, setNewMeetingDate] = useState(new Date());
+  // --- تمام هوک‌ها به بالای کامپوننت منتقل شدند ---
+  const [navDate, setNavDate] = useState(moment());
+  const [selectedDate, setSelectedDate] = useState(moment());
+  const [taskTitle, setTaskTitle] = useState('');
+  const [meetingTitle, setMeetingTitle] = useState('');
 
   const allEvents = useMemo(() => {
-    if (!user) return []; // Internal guard
+    if (!user) return {};
     const okrsData = user.okrsData || { yearly: [], quarterly: [], monthly: [] };
     const calendarEvents = user.calendarEvents || [];
     const okrDeadlines = [
@@ -73,140 +32,129 @@ function CalendarScreen({ user, onUpdateUser, onGoToDashboard }) {
       ...(okrsData.quarterly || []),
       ...(okrsData.monthly || [])
     ].flatMap(obj => obj.keyResults || []).map(kr => ({
-      date: kr.deadline,
+      date: moment(kr.deadline).format('YYYY-M-D'),
       title: `مهلت OKR: ${kr.title}`,
-      type: 'okr',
-      completed: kr.completed,
+      type: 'okr'
     }));
     const userTasks = calendarEvents.map(event => ({
-      date: event.start,
+      date: moment(event.start).format('YYYY-M-D'),
       title: event.title,
-      type: 'task',
-      completed: event.completed || false
+      type: 'task'
     }));
-    return [...okrDeadlines, ...userTasks];
+
+    const eventsMap = {};
+    [...okrDeadlines, ...userTasks].forEach(event => {
+      if (!eventsMap[event.date]) { eventsMap[event.date] = []; }
+      eventsMap[event.date].push(event);
+    });
+    return eventsMap;
   }, [user]);
 
-  const markedDays = useMemo(() => 
-    allEvents.map(event => {
-      const day = toCalendarDay(event.date);
-      if (!day) return null;
-      return { ...day, className: event.type === 'okr' ? 'okr-marker' : 'task-marker' };
-    }).filter(Boolean),
-  [allEvents]);
+  const selectedDayEvents = useMemo(() => {
+    if (!selectedDate) return [];
+    return allEvents[selectedDate.format('YYYY-M-D')] || [];
+  }, [selectedDate, allEvents]);
 
-  const todaysEvents = useMemo(() => {
-    const todayStr = moment().format('YYYY-MM-DD');
-    return allEvents.filter(event => moment(event.date).format('YYYY-MM-DD') === todayStr);
-  }, [allEvents]);
-
-  // const eventsForSelectedDay = useMemo(() => { // این متغیر حذف شد چون در کد استفاده نشده بود
-  //   if (!selectedDay) return [];
-  //   const selectedDateStr = moment(`${selectedDay.year}/${selectedDay.month}/${selectedDay.day}`, 'jYYYY/jM/jD').format('YYYY-MM-DD');
-  //   return allEvents.filter(event => moment(event.date).format('YYYY-MM-DD') === selectedDateStr);
-  // }, [selectedDay, allEvents]);
-
-  // --- Guard clause now comes AFTER all hooks ---
+  // --- گارد محافظ بعد از تمام هوک‌ها ---
   if (!user) {
     return <div className="loading-container">در حال بارگذاری...</div>;
   }
+  
+  const renderCalendarGrid = () => {
+    const year = navDate.jYear();
+    const month = navDate.jMonth();
+    const firstDayOfMonth = navDate.clone().startOf('jMonth');
+    const lastDayOfMonth = navDate.clone().endOf('jMonth');
+    const daysInMonth = lastDayOfMonth.jDate();
+    let startDayIndex = firstDayOfMonth.day(); // 0 for Saturday in moment-jalaali
 
-  // --- Handler functions ---
+    const grid = [];
+    for (let i = 0; i < startDayIndex; i++) {
+      grid.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
+    }
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = moment(`${year}/${month + 1}/${day}`, 'jYYYY/jM/jD');
+      const dateKey = date.format('YYYY-M-D');
+      let classes = "calendar-day h-10 flex items-center justify-center rounded-full cursor-pointer";
+      if (date.isSame(moment(), 'day')) classes += ' today';
+      if (date.isSame(selectedDate, 'day')) classes += ' selected';
+      if (allEvents[dateKey]) classes += ' has-event';
+      grid.push(
+        <div key={day} className={classes} onClick={() => setSelectedDate(date)}>
+          {day}
+        </div>
+      );
+    }
+    return grid;
+  };
+  
   const handleAddEvent = (type) => {
-    const title = type === 'task' ? newTask : newMeeting;
-    const date = type === 'task' ? newTaskDate : newMeetingDate;
+    const title = type === 'task' ? taskTitle : meetingTitle;
     if (!title.trim()) return;
+
     const newEvent = {
       title,
-      start: date.toISOString(),
-      end: date.toISOString(),
+      start: selectedDate.toISOString(),
+      end: selectedDate.toISOString(),
       allDay: true,
-      completed: false,
+      type
     };
     const updatedUser = { ...user, calendarEvents: [...(user.calendarEvents || []), newEvent] };
     onUpdateUser(updatedUser);
-    if (type === 'task') {
-      setNewTask('');
-      setNewTaskDate(new Date());
-    } else {
-      setNewMeeting('');
-      setNewMeetingDate(new Date());
-    }
-  };
-  
-  const handleToggleTask = (task) => {
-    const updatedUser = {
-      ...user,
-      calendarEvents: (user.calendarEvents || []).map(event => {
-        if (event.title === task.title && event.start === task.date) {
-          return { ...event, completed: !event.completed };
-        }
-        return event;
-      })
-    };
-    onUpdateUser(updatedUser);
-  };
-  
-  const renderCustomFooter = () => {
-    return (
-      <div className="custom-calendar-footer-ads">
-        <div className="footer-today-styled">
-          <span>امروز</span>
-          <strong>{moment().format('jD jMMMM')}</strong>
-        </div>
-        <div className="footer-ad-placeholder"></div>
-      </div>
-    );
+
+    if (type === 'task') setTaskTitle('');
+    else setMeetingTitle('');
   };
 
   return (
-    <div className="calendar-container modern">
-      <div className="page-header">
-        <h1>تقویم هوشمند مدیریتی</h1>
-        <button onClick={onGoToDashboard} className="back-to-dashboard-btn">
-          <i className="fa-solid fa-arrow-right"></i> بازگشت به منوی اصلی
-        </button>
-      </div>
-      
-      <div className="todays-agenda">
-        <div className="events-header">
-          <h3>برنامه امروز شما</h3>
-          <span>{moment().format('dddd jD jMMMM jYYYY')}</span>
+    <div className="calendar-container v3-design">
+      <button onClick={onGoToDashboard} className="back-to-dashboard-btn minimal">
+        <i className="fa-solid fa-arrow-right"></i>
+      </button>
+      <header className="pomodoro-header">
+        <h1 className="text-4xl font-bold">تقویم هوشمند</h1>
+        <p className="text-indigo-300 mt-2">برنامه‌های خود را مدیریت کنید</p>
+      </header>
+      <main className="pomodoro-card">
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => setNavDate(navDate.clone().add(1, 'jMonth'))} className="p-2 rounded-full hover:bg-white/20 transition-colors">
+            <i className="fa-solid fa-chevron-right"></i>
+          </button>
+          <h2 className="text-xl font-semibold">{navDate.format('jMMMM jYYYY')}</h2>
+          <button onClick={() => setNavDate(navDate.clone().subtract(1, 'jMonth'))} className="p-2 rounded-full hover:bg-white/20 transition-colors">
+            <i className="fa-solid fa-chevron-left"></i>
+          </button>
         </div>
-        <div className="events-list">
-          {todaysEvents.length > 0 ? (
-            todaysEvents.map((event, index) => (
-              <div key={index} className={`event-item event-${event.type} ${event.completed ? 'completed' : ''}`} onClick={() => event.type === 'task' && handleToggleTask(event)}>
-                <span className="event-title">{event.title}</span>
-                {event.type === 'task' && <div className="checkmark">✔</div>}
-              </div>
-            ))
-          ) : (
-            <p className="no-events">امروز برنامه‌ای ثبت نشده است.</p>
-          )}
+        <div className="calendar-grid mb-6 text-center">
+          {['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'].map(d => <div key={d} className="font-bold text-indigo-300">{d}</div>)}
         </div>
-      </div>
-
-      <div className="input-forms-section">
-        <div className="add-event-form">
-          <h4><i className="fa-solid fa-list-check"></i> افزودن تسک جدید</h4>
-          <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="عنوان تسک..." />
-          <DatePickerInput selectedDate={newTaskDate} setSelectedDate={setNewTaskDate} />
-          <button onClick={() => handleAddEvent('task')}>افزودن تسک</button>
+        <div className="calendar-grid">{renderCalendarGrid()}</div>
+        <div className="mt-8">
+          <h3 className="text-lg font-bold mb-3 text-indigo-200 border-b border-white/10 pb-2">برنامه روز {selectedDate.format('jD jMMMM')}</h3>
+          <ul className="space-y-2 max-h-32 overflow-y-auto pr-2">
+            {selectedDayEvents.length > 0 ? selectedDayEvents.map((event, index) => (
+              <li key={index} className="bg-white/5 p-3 rounded-lg flex items-center gap-3">
+                <i className={`fa-solid ${event.type === 'task' ? 'fa-list-check text-blue-400' : 'fa-calendar-check text-green-400'}`}></i>
+                <span>{event.title}</span>
+              </li>
+            )) : <li className="text-indigo-400 text-center p-4">رویدادی برای این روز ثبت نشده است.</li>}
+          </ul>
         </div>
-        
-        <div className="add-event-form">
-          <h4><i className="fa-solid fa-calendar-plus"></i> ثبت جلسه / قرار ملاقات</h4>
-          <input type="text" value={newMeeting} onChange={(e) => setNewMeeting(e.target.value)} placeholder="عنوان جلسه..." />
-          <DatePickerInput selectedDate={newMeetingDate} setSelectedDate={setNewMeetingDate} />
-          <button onClick={() => handleAddEvent('meeting')}>ثبت جلسه</button>
+        <div className="mt-6">
+          <h3 className="text-md font-semibold mb-2 text-indigo-200 flex items-center gap-2"><i className="fa-solid fa-clipboard-list"></i><span>افزودن تسک جدید</span></h3>
+          <div className="flex gap-2">
+            <input type="text" value={taskTitle} onChange={e => setTaskTitle(e.target.value)} placeholder="عنوان تسک..." className="flex-grow bg-white/5 border border-white/20 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"/>
+            <button onClick={() => handleAddEvent('task')} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg">افزودن</button>
+          </div>
         </div>
-      </div>
-
-      <div className="calendar-widget-wrapper full-view">
-        <h3 className="calendar-title">نمای کلی ماه</h3>
-        <Calendar value={selectedDay} onChange={setSelectedDay} shouldHighlightWeekends locale="fa" customDaysClassName={markedDays} calendarClassName="responsive-calendar final" renderFooter={renderCustomFooter} />
-      </div>
+        <div className="mt-4">
+          <h3 className="text-md font-semibold mb-2 text-indigo-200 flex items-center gap-2"><i className="fa-solid fa-calendar-plus"></i><span>ثبت جلسه / قرار ملاقات</span></h3>
+          <div className="flex gap-2">
+            <input type="text" value={meetingTitle} onChange={e => setMeetingTitle(e.target.value)} placeholder="عنوان جلسه..." className="flex-grow bg-white/5 border border-white/20 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"/>
+            <button onClick={() => handleAddEvent('meeting')} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg">ثبت</button>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

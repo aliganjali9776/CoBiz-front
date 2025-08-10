@@ -1,185 +1,214 @@
 // src/components/OKRScreen.js
 
-import React, { useState, useMemo } from 'react';
-import DatePicker from 'react-datepicker';
+import React, { useState, useEffect, useMemo } from 'react';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
+import { faIR } from 'date-fns/locale';
+import moment from 'moment-jalaali';
 
-ChartJS.register(ArcElement, Tooltip);
+registerLocale('fa', faIR);
 
-const AddObjectiveModal = ({ onAdd, onCancel }) => {
+// کامپوننت مودال برای افزودن هدف
+const AddObjectiveModal = ({ isOpen, onSave, onCancel }) => {
   const [title, setTitle] = useState('');
-  const [timeframe, setTimeframe] = useState('quarterly');
-  const handleSubmit = () => {
-    if (title.trim()) { onAdd({ title, timeframe }); }
+  const [owner, setOwner] = useState('');
+  const [krText, setKrText] = useState('');
+  const [dueDate, setDueDate] = useState(new Date());
+
+  if (!isOpen) return null;
+
+  const handleSave = () => {
+    if (!title.trim()) return alert('عنوان هدف نمی‌تواند خالی باشد.');
+    const krs = krText ? krText.split('\n').map(k => ({ title: k.trim(), progress: 0 })) : [];
+    onSave({ title, owner, krs, due: dueDate.toISOString() });
+    setTitle(''); setOwner(''); setKrText('');
   };
+
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>افزودن هدف اصلی جدید</h2>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="عنوان هدف اصلی (مثال: افزایش فروش در فصل بهار)" />
-        <select value={timeframe} onChange={(e) => setTimeframe(e.target.value)}>
-          <option value="monthly">ماهانه</option>
-          <option value="quarterly">فصلی</option>
-          <option value="yearly">سالیانه</option>
-        </select>
-        <div className="modal-actions">
-          <button onClick={handleSubmit} className="btn-primary">ذخیره هدف</button>
-          <button onClick={onCancel} className="btn-secondary">انصراف</button>
+    <div className="modal-backdrop-v2">
+      <div className="modal-v2">
+        <h4>افزودن هدف جدید</h4>
+        <div className="form-row">
+          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="عنوان هدف (مثلاً: افزایش فروش ۲۰%)" />
+        </div>
+        <div className="form-row">
+          <input value={owner} onChange={e => setOwner(e.target.value)} placeholder="مسئول (مثلاً: علیرضا)" />
+          <DatePicker selected={dueDate} onChange={date => setDueDate(date)} dateFormat="yyyy/MM/dd" locale="fa" customInput={<input/>}/>
+        </div>
+        <textarea value={krText} onChange={e => setKrText(e.target.value)} rows="3" placeholder="نتایج کلیدی؛ هر خط یک KR بنویسید"></textarea>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '12px' }}>
+          <button className="btn ghost" onClick={onCancel}>انصراف</button>
+          <button className="btn" onClick={handleSave}>افزودن هدف</button>
         </div>
       </div>
     </div>
   );
 };
 
-const ProgressDonut = ({ progress }) => {
-  const data = {
-    datasets: [{
-        data: [progress, 100 - progress],
-        backgroundColor: ['#28a745', '#e9ecef'],
-        borderColor: ['#28a745', '#e9ecef'],
-        circumference: 180,
-        rotation: 270,
-    }],
-  };
-  const options = { responsive: true, cutout: '80%', plugins: { tooltip: { enabled: false } } };
-  return (
-    <div className="progress-donut-container">
-      <Doughnut data={data} options={options} />
-      <span>{progress}%</span>
-    </div>
-  );
-};
-
-
 function OKRScreen({ user, onUpdateUser, onGoToDashboard }) {
-  const [activeTab, setActiveTab] = useState('quarterly');
+  // --- تمام هوک‌ها به بالای کامپوننت منتقل شدند ---
+  const [activeTimeframe, setActiveTimeframe] = useState('quarterly');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newKeyResults, setNewKeyResults] = useState({});
-  const [deadlines, setDeadlines] = useState({});
-  const [krOwners, setKrOwners] = useState({});
+  const [objectives, setObjectives] = useState([]);
+  const [newKrText, setNewKrText] = useState({});
 
-  const okrsData = useMemo(() => (user ? user.okrsData : null) || { yearly: [], quarterly: [], monthly: [] }, [user]);
-
-  if (!user) {
-    return <div className="loading-container">در حال بارگذاری اطلاعات...</div>;
-  }
-
-  const updateProgress = (okrs) => {
-    return okrs.map(obj => {
-      if (!obj.keyResults || obj.keyResults.length === 0) {
-        return { ...obj, progress: 0 };
+  useEffect(() => {
+    if (user && user.okrsData) {
+      setObjectives(user.okrsData[activeTimeframe] || []);
+    }
+  }, [user, activeTimeframe]);
+  
+  const overallProgress = useMemo(() => {
+    if (!objectives || objectives.length === 0) return 0;
+    let totalPercent = 0;
+    let count = 0;
+    objectives.forEach(obj => {
+      if (obj.krs && obj.krs.length > 0) {
+        const objProgress = Math.round(obj.krs.reduce((sum, kr) => sum + (kr.progress || 0), 0) / obj.krs.length);
+        totalPercent += objProgress;
+        count++;
       }
-      const completedCount = obj.keyResults.filter(kr => kr.completed).length;
-      const progress = Math.round((completedCount / obj.keyResults.length) * 100);
-      return { ...obj, progress };
     });
-  };
+    return count > 0 ? Math.round(totalPercent / count) : 0;
+  }, [objectives]);
+  
+  const totalKRs = useMemo(() => objectives.reduce((sum, obj) => sum + (obj.krs?.length || 0), 0), [objectives]);
+  const doneKRs = useMemo(() => objectives.reduce((sum, obj) => sum + (obj.krs?.filter(k => k.progress >= 100).length || 0), 0), [objectives]);
+  
+  // --- گارد محافظ بعد از تمام هوک‌ها ---
+  if (!user) { return <div className="loading-container">در حال بارگذاری...</div>; }
 
-  const handleAddObjective = ({ title, timeframe }) => {
-    const newObjective = { id: Date.now(), title, progress: 0, keyResults: [] };
-    const updatedOkrsData = { ...okrsData, [timeframe]: [...(okrsData[timeframe] || []), newObjective] };
-    onUpdateUser({ ...user, okrsData: updatedOkrsData });
+  const handleUpdateObjectives = (newObjectives) => {
+    const updatedUser = { ...user, okrsData: { ...user.okrsData, [activeTimeframe]: newObjectives } };
+    onUpdateUser(updatedUser);
+  };
+  
+  const handleAddObjective = (newObjectiveData) => {
+    const newObj = { id: Date.now(), ...newObjectiveData, created: new Date().toISOString() };
+    handleUpdateObjectives([...objectives, newObj]);
     setIsModalOpen(false);
-    setActiveTab(timeframe);
   };
   
-  const handleAddKeyResult = (objectiveId) => {
-    const krText = newKeyResults[objectiveId];
-    const krOwner = krOwners[objectiveId] || user.name;
-    const krDeadline = deadlines[objectiveId] || new Date();
+  const handleAddKrToObjective = (objId) => {
+    const text = newKrText[objId];
+    if (!text || !text.trim()) return;
 
-    if (!krText || !krText.trim()) return;
-
-    const updatedOkrsData = { ...okrsData };
-    updatedOkrsData[activeTab] = (updatedOkrsData[activeTab] || []).map(obj => {
-      if (obj.id === objectiveId) {
-        const newKr = { id: Date.now(), title: krText, completed: false, owner: krOwner, deadline: krDeadline.toISOString() };
-        return { ...obj, keyResults: [...(obj.keyResults || []), newKr] };
-      }
-      return obj;
-    });
-
-    updatedOkrsData[activeTab] = updateProgress(updatedOkrsData[activeTab]);
-    onUpdateUser({ ...user, okrsData: updatedOkrsData });
-    
-    // *** اینجا اصلاح شد ***
-    setNewKeyResults({ ...newKeyResults, [objectiveId]: '' });
-    setKrOwners({ ...krOwners, [objectiveId]: '' });
-  };
-  
-  const handleToggleKR = (objectiveId, krId) => {
-    const updatedOkrsData = { ...okrsData };
-    updatedOkrsData[activeTab] = (updatedOkrsData[activeTab] || []).map(obj => {
-        if (obj.id === objectiveId) {
-            const updatedKrs = (obj.keyResults || []).map(kr => 
-                kr.id === krId ? { ...kr, completed: !kr.completed } : kr
-            );
-            return { ...obj, keyResults: updatedKrs };
+    const updatedObjectives = objectives.map(obj => {
+        if (obj.id === objId) {
+            const newKr = { title: text, progress: 0 };
+            const updatedKrs = [...(obj.krs || []), newKr];
+            return { ...obj, krs: updatedKrs };
         }
         return obj;
     });
+    handleUpdateObjectives(updatedObjectives);
+    setNewKrText({ ...newKrText, [objId]: '' });
+  }
 
-    updatedOkrsData[activeTab] = updateProgress(updatedOkrsData[activeTab]);
-    onUpdateUser({ ...user, okrsData: updatedOkrsData });
+  const handleUpdateKrProgress = (objId, krIndex, newProgress) => {
+      const updatedObjectives = objectives.map(obj => {
+          if (obj.id === objId) {
+              const updatedKrs = obj.krs.map((kr, index) => 
+                  index === krIndex ? { ...kr, progress: newProgress } : kr
+              );
+              return { ...obj, krs: updatedKrs };
+          }
+          return obj;
+      });
+      handleUpdateObjectives(updatedObjectives);
   };
 
-  const visibleOkrs = okrsData[activeTab] || [];
-
   return (
-    <>
-      {isModalOpen && <AddObjectiveModal onAdd={handleAddObjective} onCancel={() => setIsModalOpen(false)} />}
-      <div className="okr-container professional">
-        <div className="page-header">
-            <h1>مدیریت اهداف (OKR)</h1>
-            <button onClick={onGoToDashboard} className="back-to-dashboard-btn">
-              <i className="fa-solid fa-arrow-right"></i> بازگشت به منوی اصلی
-            </button>
-        </div>
-        <div className="okr-header">
-            <div className="tabs">
-                <button className={activeTab === 'yearly' ? 'active' : ''} onClick={() => setActiveTab('yearly')}>سالیانه</button>
-                <button className={activeTab === 'quarterly' ? 'active' : ''} onClick={() => setActiveTab('quarterly')}>فصلی</button>
-                <button className={activeTab === 'monthly' ? 'active' : ''} onClick={() => setActiveTab('monthly')}>ماهانه</button>
-            </div>
-            <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-              <i className="fa-solid fa-plus"></i> افزودن هدف جدید
-            </button>
-        </div>
-        <div className="objectives-list">
-          {visibleOkrs.length > 0 ? visibleOkrs.map(obj => (
-            <div key={obj.id} className="objective-card professional">
-              <div className="objective-header">
-                <h2>{obj.title}</h2>
-                <ProgressDonut progress={obj.progress || 0} />
-              </div>
-              <div className="kr-list">
-                {(obj.keyResults || []).map(kr => (
-                  <div key={kr.id} className="kr-item professional">
-                    <div className="kr-item-main" onClick={() => handleToggleKR(obj.id, kr.id)}>
-                      <input type="checkbox" checked={kr.completed} readOnly />
-                      <span className={kr.completed ? 'completed' : ''}>{kr.title}</span>
-                    </div>
-                    <div className="kr-meta">
-                      <span className="kr-owner"><i className="fa-solid fa-user"></i> {kr.owner}</span>
-                      <span className="kr-deadline"><i className="fa-solid fa-calendar-day"></i> {new Date(kr.deadline).toLocaleDateString('fa-IR')}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="add-kr-form professional">
-                <i className="fa-solid fa-plus"></i>
-                <input type="text" placeholder="نتیجه کلیدی جدید..." value={newKeyResults[obj.id] || ''} onChange={(e) => setNewKeyResults({ ...newKeyResults, [obj.id]: e.target.value })} />
-                <input type="text" placeholder="مسئول..." className="kr-owner-input" value={krOwners[obj.id] || ''} onChange={(e) => setKrOwners({ ...krOwners, [obj.id]: e.target.value })} />
-                <DatePicker selected={deadlines[obj.id] || new Date()} onChange={(date) => setDeadlines({ ...deadlines, [obj.id]: date })} dateFormat="yyyy/MM/dd" className="kr-datepicker" />
-                <button onClick={() => handleAddKeyResult(obj.id)}>افزودن</button>
-              </div>
-            </div>
-          )) : <p className="no-results">هیچ هدفی برای این بازه زمانی تعریف نشده است.</p>}
+    <div className="okr-container v2-design">
+      <AddObjectiveModal isOpen={isModalOpen} onSave={handleAddObjective} onCancel={() => setIsModalOpen(false)} />
+      
+      <div className="header-card-v2">
+        <div className="avatar-v2">{user.name.charAt(0)}</div>
+        <div className="header-text-v2">
+          <h1>سلام، {user.name}!</h1>
+          <p>با CoBiz — بام بیزینست را بهبود می‌دهیم</p>
         </div>
       </div>
-    </>
+
+      <div className="quick-grid">
+        <div className={`quick q-blue ${activeTimeframe === 'yearly' ? 'active' : ''}`} onClick={() => setActiveTimeframe('yearly')}>
+            <div className="title">سالیانه</div><div className="sub">اهداف بلندمدت</div>
+        </div>
+        <div className={`quick q-teal ${activeTimeframe === 'quarterly' ? 'active' : ''}`} onClick={() => setActiveTimeframe('quarterly')}>
+            <div className="title">فصلی</div><div className="sub">تمرکز سه ماهه</div>
+        </div>
+        <div className={`quick q-orange ${activeTimeframe === 'monthly' ? 'active' : ''}`} onClick={() => setActiveTimeframe('monthly')}>
+            <div className="title">ماهانه</div><div className="sub">اقدامات سریع</div>
+        </div>
+        <div className="quick q-yellow" onClick={onGoToDashboard}>
+            <div className="title">بازگشت</div><div className="sub">به داشبورد اصلی</div>
+        </div>
+      </div>
+
+      <div className="main-v2">
+        <div className="left-panel-v2">
+          <div className="okr-summary">
+            <h3>پیشرفت کلی OKR</h3>
+            <div className="okr-small">نمودار پیشرفت اهداف این دوره</div>
+          </div>
+          <div className="gauge-wrap">
+            <div className="gauge">
+              <svg viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#eef3f6" strokeWidth="10"></path>
+                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#3b82f6" strokeWidth="10" 
+                      style={{strokeDasharray: `${overallProgress * 1.256}, 125.6`}}></path>
+              </svg>
+              <div className="pct">{overallProgress}%</div>
+            </div>
+          </div>
+          <div className="actions">
+            <button className="btn" onClick={() => setIsModalOpen(true)}>+ افزودن هدف جدید</button>
+          </div>
+          <div style={{ marginTop: '14px', textAlign: 'center', color: '#9aa3b2', fontSize: '13px' }}>
+            <div>نتایج کلیدی کامل‌شده: <strong>{doneKRs}</strong> / {totalKRs}</div>
+          </div>
+        </div>
+
+        <div className="right-panel-v2">
+          <div className="panel-header">
+            <h2>اهداف ({activeTimeframe})</h2>
+          </div>
+          <div className="objs">
+            {objectives.map(obj => (
+              <div key={obj.id} className="obj-card">
+                <div className="obj-head">
+                  <h3>{obj.title}</h3>
+                  <div className="obj-meta">{obj.owner || 'بدون مسئول'} {obj.due ? `• تا ${new Date(obj.due).toLocaleDateString('fa-IR')}` : ''}</div>
+                </div>
+                <div className="krs">
+                  {(obj.krs || []).map((kr, idx) => (
+                    <div key={idx} className="kr">
+                      <div className="kr-left">
+                        <div className="kr-title">{kr.title}</div>
+                        <div className="kr-meta">پیشرفت: {kr.progress || 0}%</div>
+                      </div>
+                      <div className="kr-actions">
+                        <input type="range" min="0" max="100" value={kr.progress || 0}
+                               onChange={(e) => handleUpdateKrProgress(obj.id, idx, parseInt(e.target.value))} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                 <form className="add-kr-inline-form" onSubmit={(e) => {
+                     e.preventDefault();
+                     const input = e.target.elements.krTitle;
+                     handleAddKrToObjective(obj.id, input.value);
+                     input.value = '';
+                 }}>
+                    <input name="krTitle" className="small-input" placeholder="نتیجه کلیدی جدید..." />
+                    <button type="submit" className="btn">افزودن</button>
+                </form>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
