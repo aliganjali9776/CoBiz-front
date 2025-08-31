@@ -45,19 +45,19 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
           {/* --- کلاس‌های رنگی اینجا اصلاح شدند --- */}
           <div className="dashboard-card glass-card" onClick={onGoToQuizHome}>
             <div className="icon-wrapper bg-green-500/20 text-green-300"><i className="fa-solid fa-file-signature"></i></div>
-            <h3 className="card-title">آزمون‌ها</h3>
+            <h3 className="card-title">شبیه‌ساز</h3>
           </div>
           <div className="dashboard-card glass-card" onClick={onGoToKnowledge}>
             <div className="icon-wrapper bg-orange-500/20 text-orange-300"><i className="fa-solid fa-book-bookmark"></i></div>
-            <h3 className="card-title">کتابخانه</h3>
+            <h3 className="card-title">بانک دانش</h3>
           </div>
           <div className="dashboard-card glass-card" onClick={onGoToCalendar}>
             <div className="icon-wrapper bg-yellow-500/20 text-yellow-300"><i className="fa-solid fa-calendar-days"></i></div>
-            <h3 className="card-title">تقویم</h3>
+            <h3 className="card-title">برنامه ریزی</h3>
           </div>
            <div className="dashboard-card glass-card" onClick={onGoToReviews}>
             <div className="icon-wrapper bg-purple-500/20 text-purple-300"><i className="fa-solid fa-star"></i></div>
-            <h3 className="card-title">نقد و بررسی</h3>
+            <h3 className="card-title">راهنمای مدیران</h3>
           </div>
           <div className="dashboard-card glass-card" onClick={onGoToPrices}>
             <div className="icon-wrapper bg-indigo-500/20 text-indigo-300"><i className="fa-solid fa-chart-line"></i></div>
@@ -65,7 +65,7 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
           </div>
           <div className="dashboard-card glass-card" onClick={onGoToNews}>
             <div className="icon-wrapper bg-red-500/20 text-red-300"><i className="fa-solid fa-newspaper"></i></div>
-            <h3 className="card-title">اخبار</h3>
+            <h3 className="card-title">اخبار مدیریتی</h3>
           </div>
         </div>
 
@@ -77,8 +77,8 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
 
       <footer className="bottom-nav compact">
         <div className="nav-item active" onClick={onGoToDashboard}><i className="fa-solid fa-home"></i><span className="nav-text">خانه</span></div>
-        <div className="nav-item" onClick={onGoToOKR}><i className="fa-solid fa-bullseye"></i><span className="nav-text">اهداف</span></div>
-        <div className="nav-item" onClick={onGoToPomodoro}><i className="fa-solid fa-clock"></i><span className="nav-text">پومودورو</span></div>
+        <div className="nav-item" onClick={onGoToOKR}><i className="fa-solid fa-bullseye"></i><span className="nav-text">هدف گزاری</span></div>
+        <div className="nav-item" onClick={onGoToPomodoro}><i className="fa-solid fa-clock"></i><span className="nav-text">تمرکز</span></div>
         <div className="nav-item" onClick={onGoToAI}><i className="fa-solid fa-robot"></i><span className="nav-text">دستیار AI</span></div>
         <div className="nav-item" onClick={onLogout}><i className="fa-solid fa-sign-out-alt"></i><span className="nav-text">خروج</span></div>
       </footer>

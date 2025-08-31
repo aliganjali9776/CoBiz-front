@@ -1,9 +1,9 @@
 // src/components/AIScreen.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { knowledgeData } from '../data/knowledgeData';
 
-const BACKEND_URL = 'https://cobiz.onrender.com';
+// URL بک‌اند را به صورت ثابت تعریف می‌کنیم
+const BACKEND_URL = 'http://localhost:5001';
 
 function AIScreen({ onGoToDashboard }) {
   const [messages, setMessages] = useState([
@@ -28,20 +28,11 @@ function AIScreen({ onGoToDashboard }) {
     setIsLoading(true);
 
     try {
-      const knowledgeContext = knowledgeData.map(item => `- ${item.title}: ${item.summary}`).join('\n');
-      const fullPrompt = `
-        شما یک دستیار متخصص در زمینه مدیریت برای مدیران هستید. شما باید پاسخ‌های کوتاه، عملی و حرفه‌ای بدهید.
-        در صورت نیاز، از دانش زیر برای پاسخگویی استفاده کن:
-        ---
-        ${knowledgeContext}
-        ---
-        سوال کاربر: ${currentInput}
-      `;
-
-      const response = await fetch(`${BACKEND_URL}/api/chat`, {
+      // استفاده از endpoint جدید برای هوش مصنوعی چند-ایجنت
+      const response = await fetch(`${BACKEND_URL}/api/business-chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: fullPrompt }),
+        body: JSON.stringify({ prompt: currentInput }),
       });
 
       if (!response.ok) {
@@ -50,22 +41,28 @@ function AIScreen({ onGoToDashboard }) {
 
       const data = await response.json();
       const aiMessage = { text: data.response, sender: 'ai' };
-      setMessages(prev => [...prev, userMessage, aiMessage]);
+      setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
       console.error("Error fetching from backend:", error);
       const errorMessage = { text: 'متاسفانه در ارتباط با سرور بک‌اند مشکلی پیش آمد. لطفاً مطمئن شوید سرور شما در حال اجراست.', sender: 'ai' };
-      setMessages(prev => [...prev, userMessage, errorMessage]);
+      setMessages(prev => [...prev, errorMessage]);
     }
 
     setIsLoading(false);
+  };
+
+  const renderMessageContent = (text) => {
+    // از dangerouslySetInnerHTML برای نمایش Markdown استفاده می‌کنیم
+    // این کار برای نمایش بهتر پاسخ‌های چند-ایجنت ضروری است
+    return { __html: text.replace(/\n/g, '<br/>') };
   };
 
   return (
     <div className="ai-container">
       <div className="page-header">
         <h1>دستیار هوش مصنوعی مدیر</h1>
-        <button onClick={onGoToDashboard} className="back-to-dashboard-btn">
+        <button onClick={onGoToDashboard} className="back-to-dashboard-btn minimal">
           <i className="fa-solid fa-arrow-right"></i> بازگشت به منوی اصلی
         </button>
       </div>
@@ -73,7 +70,7 @@ function AIScreen({ onGoToDashboard }) {
         <div className="chat-messages">
           {messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
-              <p>{msg.text}</p>
+              <p dangerouslySetInnerHTML={renderMessageContent(msg.text)}></p>
             </div>
           ))}
           {isLoading && <div className="message ai typing-indicator"><span>.</span><span>.</span><span>.</span></div>}

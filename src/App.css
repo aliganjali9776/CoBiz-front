@@ -644,3 +644,786 @@ th, td { padding: 0.75rem; }
 /* رنگ‌بندی برای آیکون جدید در داشبورد */
 .bg-red-500\/20 { background-color: rgba(239, 68, 68, 0.2); }
 .text-red-300 { color: #fca5a5; }
+/* استایل‌های صفحه اخبار */
+
+.category-filters {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 30px 0;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+.filter-chip {
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary-light);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.filter-chip.active, .filter-chip:hover {
+  background: var(--glass-hover);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+.news-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+.news-card {
+  background-color: var(--glass-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+.news-card:hover {
+  transform: translateY(-5px);
+}
+
+.news-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.news-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.news-source {
+  font-size: 0.8rem;
+  color: var(--indigo-300);
+  margin-bottom: 5px;
+}
+
+.news-title {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.news-description {
+  font-size: 1rem;
+  color: var(--text-secondary-light);
+  flex-grow: 1;
+}
+/* src/App.css - استایل‌های جدید برای دکمه‌های صفحه شبیه‌ساز */
+
+/* ۱. یک کانتینر برای دکمه‌ها جهت چیدمان بهتر */
+.quiz-home-actions {
+  display: flex;
+  gap: 15px; /* فاصله بین دکمه‌ها */
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+/* ۲. استایل اصلی و پایه برای همه دکمه‌ها */
+.btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ۳. استایل دکمه اصلی (Primary) - برای شروع آزمون */
+.btn-primary {
+  background-color: var(--text-primary-light); /* رنگ سفید */
+  color: #1e293b; /* یک رنگ تیره برای متن */
+  box-shadow: 0 4px 15px rgba(236, 240, 241, 0.2);
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(236, 240, 241, 0.3);
+}
+
+/* ۴. استایل دکمه دوم (Secondary) - برای رتبه‌بندی */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1); /* پس‌زمینه شیشه‌ای */
+  color: var(--text-primary-light);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}/* src/App.css - استایل‌های جدید برای صفحه آزمون (QuizScreen) */
+
+/* هدر صفحه آزمون که شامل دکمه بازگشت و عنوان است */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.quiz-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+/* نوار پیشرفت در بالای صفحه */
+.progress-bar-quiz-container {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-bottom: 25px;
+  overflow: hidden;
+}
+.progress-bar-quiz-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--green-400), var(--blue-400));
+  border-radius: 8px;
+  transition: width 0.5s ease-in-out;
+}
+
+/* کارت اصلی سوال */
+.question-card-main {
+  text-align: center;
+}
+.question-counter {
+  color: var(--text-secondary-light);
+  margin-bottom: 10px;
+}
+.question-text-main {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* کانتینر گزینه‌های پاسخ */
+.quiz-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* طراحی جدید و جذاب برای دکمه‌های گزینه‌ها */
+.quiz-option-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1rem;
+  font-family: 'Vazirmatn', sans-serif;
+  text-align: right;
+  background: var(--glass-bg);
+  color: var(--text-primary-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.quiz-option-btn:hover {
+  background: var(--glass-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}/* ==========================================================================
+   ۹. استایل‌های صفحه انتخاب نقش (RoleSelectionScreen)
+   ========================================================================== */
+.role-selection h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.role-selection .page-description {
+  text-align: center;
+  color: var(--text-secondary-light);
+  margin-top: 0;
+  margin-bottom: 30px;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.role-selection-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* چیدمان دو ستونی */
+  gap: 15px;
+}
+
+.role-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 25px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.role-card:hover {
+  background: var(--glass-hover);
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.role-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: var(--indigo-300);
+}
+
+.role-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+
+/* ==========================================================================
+   ۱۰. استایل‌های صفحه نتایج (ResultsScreen)
+   ========================================================================== */
+.score-gauge {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 20px auto;
+}
+
+.score-gauge svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-gauge-bg {
+  stroke: rgba(0, 0, 0, 0.3);
+  stroke-width: 12;
+  fill: none;
+}
+
+.score-gauge-fg {
+  stroke: var(--green-400);
+  stroke-width: 12;
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-out;
+}
+
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.score-text span {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.results-summary {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.results-summary h3 {
+  color: var(--text-secondary-light);
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.results-summary p {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.results-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+/* Styles for the unlocked answers review */
+.answers-review {
+  margin-top: 30px;
+}
+.answers-review h3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.answer-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-left-width: 5px;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+.answer-card.correct-border {
+  border-left-color: var(--green-400);
+}
+.answer-card.incorrect-border {
+  border-left-color: #f87171; /* red-400 */
+}
+.answer-card h4 {
+  margin: 0 0 10px 0;
+}
+.answer-card p {
+  margin: 5px 0;
+  color: var(--text-secondary-light);
+}
+.answer-card .correct {
+  color: var(--green-400);
+}
+.answer-card .incorrect {
+  color: #fca5a5; /* red-300 */
+}
+.rationale span {
+  font-weight: bold;
+  color: var(--text-primary-light);
+}/* src/App.css - استایل‌های جدید برای بخش تاریخچه آزمون‌ها */
+
+/* لیست اصلی کارت‌های تاریخچه */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* فاصله بین کارت‌ها */
+  margin-top: 20px;
+}
+
+/* استایل هر کارت در تاریخچه */
+.history-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.history-card:hover {
+  background: var(--glass-hover);
+  transform: translateY(-3px); /* افکت شناور شدن */
+}
+
+/* محتوای متنی داخل کارت */
+.history-card-content {
+  flex-grow: 1; /* باعث می‌شود این بخش تمام فضای باقی‌مانده را بگیرد */
+}
+
+.history-title {
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 5px 0;
+}
+
+.history-date {
+  font-size: 0.85rem;
+  color: var(--text-secondary-light);
+}
+
+/* بج یا نشان امتیاز در سمت چپ کارت */
+.history-score-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #0b2030; /* رنگ متن تیره برای خوانایی بهتر */
+  flex-shrink: 0; /* جلوگیری از کوچک شدن بج */
+}
+
+/* کلاس‌های رنگی شرطی برای بج امتیاز */
+.score-high {
+  background-color: var(--green-400); /* سبز برای امتیاز بالا */
+}
+.score-medium {
+  background-color: var(--yellow-400); /* زرد برای امتیاز متوسط */
+}
+.score-low {
+  background-color: #f87171; /* قرمز برای امتیاز پایین (red-400) */
+}
+/* src/App.css - استایل‌های بازطراحی شده برای صفحه تقویم */
+
+/* ۱. ناوبری و هدر تقویم */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.calendar-nav-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+.calendar-nav-btn:hover {
+  background: var(--glass-hover);
+}
+.calendar-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ۲. لیست رویدادهای روز (To-Do List) */
+.event-list {
+  list-style: none;
+  padding: 0;
+  max-height: 150px; /* ارتفاع حداکثری برای اسکرول خوردن */
+  overflow-y: auto;
+  margin-top: 10px;
+}
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+.todo-item .todo-title {
+  color: var(--text-primary-light);
+  transition: all 0.3s ease;
+}
+/* استایل برای آیتم‌های تیک‌خورده */
+.todo-item.completed .todo-title {
+  text-decoration: line-through;
+  color: var(--text-secondary-light);
+  opacity: 0.7;
+}
+.todo-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--green-400); /* رنگ تیک */
+}
+/* استایل برای رویدادهای غیرقابل تیک (جلسات و OKR) */
+.todo-item .event-icon {
+  width: 20px;
+  text-align: center;
+  color: var(--indigo-300);
+}
+
+
+/* ۳. بازطراحی فرم‌های افزودن تسک و جلسه */
+.add-event-form {
+  margin-top: 25px;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 25px;
+}
+.add-event-form h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-input-group {
+  display: flex;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 8px;
+}
+.form-input {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0 10px;
+  font-family: 'Vazirmatn', sans-serif;
+}
+.form-input::placeholder {
+  color: var(--text-secondary-light);
+}
+.form-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.form-btn.task {
+  background-color: var(--blue-400);
+  color: #1e293b;
+}
+.form-btn.meeting {
+  background-color: var(--green-400);
+  color: #1e293b;
+}
+/* src/App.css - اصلاح استایل گرید تقویم */
+
+/* src/App.css - اصلاح نهایی و کامل برای چیدمان تقویم */
+
+/* این کلاس، ساختار اصلی ۷ ستونی تقویم را تعریف می‌کند */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* کلید حل مشکل اینجاست */
+  gap: 0.5rem; /* فاصله بین خانه‌ها */
+  margin-bottom: 1rem; /* فاصله بین ردیف هدر و ردیف روزها */
+}
+
+/* استایل مخصوص هدر روزهای هفته (ش, ی, د...) */
+.calendar-grid-header {
+  font-weight: 700;
+  color: var(--text-secondary-light);
+  text-align: center;
+  padding-bottom: 0.5rem;
+}
+
+/* استایل‌های قبلی برای هر روز در تقویم (بدون تغییر) */
+.calendar-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.calendar-day:not(.empty):hover {
+  background-color: var(--glass-hover);
+  transform: scale(1.05);
+}
+.calendar-day.selected {
+  background-color: #a78bfa;
+  color: #1e293b;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
+}
+.calendar-day.today {
+  background-color: var(--blue-400);
+  color: #1e293b;
+}
+.calendar-day.has-event::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--yellow-400);
+}
+/* src/App.css - نسخه کامل و نهایی استایل‌های صفحه OKR */
+
+/* استایل اصلی کانتینر صفحه OKR */
+.okr-container.v2-design {
+  background: linear-gradient(160deg, var(--bg-grad-start), var(--bg-grad-end));
+  padding: 22px !important;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 0;
+  border: none;
+  min-height: 100vh;
+  box-shadow: none;
+}
+body:has(.okr-container.v2-design) {
+  padding: 0; /* حذف پدینگ اضافی از body */
+}
+
+/* هدر صفحه */
+.header-card-v2 {
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+  border-radius: 20px; padding: 18px; display: flex; gap: 18px;
+  align-items: center; color: #fff; box-shadow: 0 8px 30px rgba(11,24,48,0.15);
+  justify-content: space-between;
+}
+.avatar-v2 {
+  width: 64px; height: 64px; border-radius: 14px;
+  background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 22px;
+}
+.header-text-v2 h1 { margin: 0; font-size: 28px; color: #fff; }
+.header-text-v2 p { margin: 2px 0 0 0; color: rgba(255,255,255,0.85); }
+
+/* کارت‌های سریع (سالیانه، فصلی، ماهانه) */
+.quick-grid { 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); /* ۳ ستونه شدن */
+  gap: 14px; 
+  margin-top: 16px; 
+}
+.quick {
+  padding: 18px; border-radius: 14px; color: #fff; display: flex; flex-direction: column;
+  gap: 8px; box-shadow: 0 6px 18px rgba(11,24,48,0.12); cursor: pointer;
+  border: 2px solid transparent; transition: all 0.3s ease;
+}
+.quick:hover, .quick.active { border-color: rgba(255,255,255,0.7); }
+.quick .title { font-weight: 700; font-size: 18px; }
+.quick .sub { font-size: 13px; opacity: 0.95; }
+.q-blue { background: linear-gradient(180deg,#3b82f6,#2f6df0); }
+.q-teal { background: linear-gradient(180deg,#27b5a8,#1ea39a); }
+.q-orange { background: linear-gradient(180deg,#ff8a5b,#ff7a43); }
+
+/* چیدمان دو ستونی اصلی */
+.main-v2 {
+  margin-top: 18px; display: grid; grid-template-columns: 420px 1fr;
+  gap: 20px; align-items: flex-start;
+}
+.left-panel-v2, .right-panel-v2 {
+  border-radius: 16px; padding: 18px; box-shadow: 0 10px 28px rgba(11,24,48,0.08);
+}
+.left-panel-v2 { background: var(--surface); color: var(--text-dark); }
+.right-panel-v2 { background: linear-gradient(180deg,#ffffff, #fbfcff); color: var(--text-dark); }
+
+/* کارت‌های اهداف و نتایج کلیدی */
+.obj-card {
+  background: #fff; border-radius: 12px; padding: 12px; border: 1px solid #eef2f7;
+  box-shadow: 0 6px 20px rgba(11,24,48,0.04); margin-bottom: 12px;
+}
+.obj-head { display: flex; justify-content: space-between; align-items: center; }
+.kr {
+  display: flex; gap: 12px; align-items: center; padding: 8px; border-radius: 10px;
+  background: linear-gradient(90deg, #f7fbff, #ffffff); border: 1px solid #eef6ff; margin-top: 8px;
+}
+.kr-left { flex: 1; }
+.kr-actions { display: flex; align-items: center; gap: 10px; }
+.kr-progress-label { font-size: 0.8rem; color: #555; width: 35px; text-align: right; }
+.btn.small { padding: 6px 12px; font-size: 1rem; }
+
+/* استایل‌های بخش جدید KPI */
+.kpis-section {
+  border-top: 1px solid #eef2f7;
+  margin-top: 15px;
+  padding-top: 15px;
+}
+.kpi-header {
+  font-size: 1rem; font-weight: 700; color: #555; margin: 0 0 10px 0;
+}
+.kpi-item { margin-bottom: 12px; }
+.kpi-title { font-size: 0.9rem; color: #333; margin-bottom: 5px; }
+.kpi-progress-container { display: flex; align-items: center; gap: 10px; }
+.kpi-progress-bar { flex-grow: 1; height: 8px; background-color: #eef3f6; border-radius: 8px; overflow: hidden; }
+.kpi-progress-fill { height: 100%; background-color: #27b5a8; border-radius: 8px; }
+.kpi-values { display: flex; align-items: center; font-size: 0.8rem; color: #777; }
+.kpi-current-input { width: 50px; border: 1px solid #e6ecf5; border-radius: 6px; padding: 2px 5px; text-align: center; }
+.add-kpi-form { display: flex; gap: 8px; margin-top: 10px; }
+.add-kpi-form .small-input { flex: 1; }
+
+/* استایل KPI های زیرمجموعه KR */
+.kr-kpis {
+  padding-left: 20px;
+  margin-top: 10px;
+  border-left: 3px solid #eef6ff;
+}/* src/App.css - اصلاحات نهایی صفحه OKR */
+
+/* ۱. حل مشکل ریسپانسیو در حالت موبایل */
+@media (max-width: 980px) {
+  .main-v2 {
+    grid-template-columns: 1fr; /* ستون‌ها در موبایل زیر هم قرار می‌گیرند */
+  }
+  .left-panel-v2 {
+    order: 2; /* پنل نمودار پایین‌تر نمایش داده می‌شود */
+  }
+  .quick-grid {
+    grid-template-columns: 1fr; /* کارت‌های سریع هم زیر هم می‌روند */
+  }
+}
+
+/* ۲. طراحی جدید و مدرن برای فرم‌های ورود اطلاعات */
+.light-input-group {
+  display: flex;
+  gap: 8px;
+  background-color: #f7f9fc; /* پس‌زمینه خیلی روشن */
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  padding: 6px;
+  margin-top: 8px;
+}
+.light-input-group .small-input {
+  background: transparent;
+  border: none;
+  flex-grow: 1; /* تمام فضای خالی را پر می‌کند */
+  padding: 0 10px;
+}
+.light-input-group .small-input:focus {
+  outline: none; /* حذف حاشیه هنگام کلیک */
+}
+
+/* استایل دکمه + در فرم جدید */
+.light-input-group .btn.small {
+  background-color: var(--blue-400);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 8px 15px;
+}/* src/App.css - کد نهایی و کامل برای ریسپانسیو صفحه OKR */
+
+@media (max-width: 980px) {
+  /* ۱. چیدمان کلی صفحه در موبایل */
+  .main-v2 {
+    grid-template-columns: 1fr; /* ستون‌ها زیر هم قرار می‌گیرند */
+  }
+  .left-panel-v2 { order: 2; }
+  .right-panel-v2 { order: 1; }
+
+  /* ۲. کارت‌های سریع (سالیانه، فصلی...) هم تک‌ستونی می‌شوند */
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* ۳. هدر صفحه در موبایل مرتب می‌شود */
+  .header-card-v2 {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  /* ۴. حل مشکل اصلی: کنترل عرض و پدینگ برای جلوگیری از بیرون‌زدگی */
+  .okr-container.v2-design {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .right-panel-v2, .left-panel-v2 {
+    padding: 12px;
+  }
+
+  /*
+    ۵. **مهم‌ترین بخش:** به فرم‌های ورود اطلاعات اجازه می‌دهیم
+    که در صورت کمبود جا، کوچک شوند و به هم نریزند.
+  */
+  .light-input-group .small-input {
+    min-width: 0; /* این خط به input اجازه می‌دهد تا از حداقل عرض خود کوچک‌تر شود */
+  }
+  .add-kpi-form {
+    flex-wrap: wrap; /* اگر دوتا input در یک خط جا نشدند، دومی به خط بعد می‌رود */
+  }
+  .add-kpi-form .small-input {
+    flex-basis: 100px; /* یک عرض پایه برای هر input در نظر می‌گیریم */
+  }
+}

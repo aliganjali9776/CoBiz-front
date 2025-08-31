@@ -1,6 +1,6 @@
 // src/components/QuizHomeScreen.js
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -24,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-// کامپوننت نمودار عملکرد
+// کامپوننت نمودار عملکرد (بدون تغییر)
 const PerformanceChart = ({ results }) => {
   const labels = results.map(r => new Date(r.date).toLocaleDateString('fa-IR'));
   const dataPoints = results.map(r => r.percentage);
@@ -34,26 +34,26 @@ const PerformanceChart = ({ results }) => {
       {
         label: 'درصد موفقیت',
         data: dataPoints,
-        borderColor: '#4e54c8',
-        backgroundColor: '#8f94fb',
-        tension: 0.1,
+        borderColor: '#818cf8',
+        backgroundColor: 'rgba(129, 140, 248, 0.5)',
+        tension: 0.2,
       },
     ],
   };
   const options = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' },
+      legend: { display: false },
       title: {
         display: true,
-        text: 'روند پیشرفت شما در آزمون مدیریت بحران',
-        font: { family: 'Vazirmatn', size: 16, color: '#fff' },
-        color: '#fff'
+        text: 'روند پیشرفت شما در آزمون‌ها',
+        font: { family: 'Vazirmatn', size: 16 },
+        color: '#ecf0f1'
       },
     },
     scales: {
-        x: { ticks: { color: '#fff' } },
-        y: { ticks: { color: '#fff' } }
+        x: { ticks: { color: '#a4b0be' } },
+        y: { ticks: { color: '#a4b0be' } }
     }
   };
   return <Line options={options} data={data} />;
@@ -67,6 +67,13 @@ function QuizHomeScreen({ user, onStartNewQuiz, onGoToDashboard, onGoToLeaderboa
   
   const quizResults = user.results?.[quizId] || [];
 
+  // تابع کمکی برای تعیین کلاس رنگ امتیاز
+  const getScoreClass = (percentage) => {
+    if (percentage >= 70) return 'score-high';
+    if (percentage >= 40) return 'score-medium';
+    return 'score-low';
+  };
+
   return (
     <div className="quiz-home-container">
       <div className="page-header">
@@ -75,33 +82,40 @@ function QuizHomeScreen({ user, onStartNewQuiz, onGoToDashboard, onGoToLeaderboa
           <i className="fa-solid fa-arrow-right"></i> بازگشت
         </button>
       </div>
-      <p>در این بخش می‌توانید در شبیه‌سازهای مدیریتی شرکت کرده و نتایج خود را بررسی کنید.</p>
-      
-      <button className="start-quiz-btn" onClick={onStartNewQuiz}>
-        شروع شبیه‌ساز جدید مدیریت بحران
-      </button>
 
-      <button className="leaderboard-link-btn" onClick={onGoToLeaderboard}>
-        <i className="fa-solid fa-trophy"></i> مشاهده رتبه‌بندی کل
-      </button>
+      <div className="quiz-home-actions">
+        <button className="btn btn-primary" onClick={onStartNewQuiz}>
+          شروع شبیه‌ساز جدید
+        </button>
+        <button className="btn btn-secondary" onClick={onGoToLeaderboard}>
+          <i className="fa-solid fa-trophy"></i> مشاهده رتبه‌بندی
+        </button>
+      </div>
 
       {quizResults.length > 0 ? (
         <>
-          <div className="chart-container">
+          <div className="chart-container" style={{marginBottom: '30px'}}>
             <PerformanceChart results={quizResults} />
           </div>
+          
+          {/* === بخش تاریخچه آزمون‌ها با طراحی جدید === */}
           <div className="results-history">
             <h3>تاریخچه آزمون‌ها</h3>
-            <ul>
-              {quizResults.map((result, index) => (
-                <li key={index}>
-                  <span className="result-scenario">سناریو: {result.scenarioTitle}</span>
-                  <span className="result-score">امتیاز: {Math.round(result.percentage)}%</span>
-                  <span className="result-date">{new Date(result.date).toLocaleDateString('fa-IR')}</span>
-                </li>
+            <div className="history-list">
+              {quizResults.slice().reverse().map((result, index) => ( // .slice().reverse() برای نمایش جدیدترین‌ها در بالا
+                <div key={index} className="history-card">
+                  <div className="history-card-content">
+                    <h4 className="history-title">سناریو: {result.scenarioTitle}</h4>
+                    <p className="history-date">{new Date(result.date).toLocaleDateString('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                  </div>
+                  <div className={`history-score-badge ${getScoreClass(result.percentage)}`}>
+                    {Math.round(result.percentage)}%
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
+          {/* === پایان بخش بازطراحی شده === */}
         </>
       ) : (
         <div className="no-results-box">
