@@ -1426,4 +1426,266 @@ body:has(.okr-container.v2-design) {
   .add-kpi-form .small-input {
     flex-basis: 100px; /* یک عرض پایه برای هر input در نظر می‌گیریم */
   }
+}/* src/App.css - افزودن رنگ جدید برای کارت تمرکز */
+
+.bg-teal-500\/20 { 
+  background-color: rgba(20, 184, 166, 0.2); 
+}
+.text-teal-300 { 
+  color: #5eead4; 
+}
+/* src/App.css - استایل‌های جدید برای صفحه لاگین */
+
+/* بازنویسی کانتینر لاگین برای ظاهر جدید */
+.login-container {
+  max-width: 400px;
+  padding: 30px;
+}
+
+/* حذف لوگوی بزرگ و قدیمی */
+.login-container .app-logo {
+  display: none;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.login-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+}
+.login-header p {
+  color: var(--text-secondary-light);
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+.input-group i {
+  position: absolute;
+  left: 15px; /* برای راست‌چین بودن، آیکون سمت چپ قرار می‌گیرد */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary-light);
+}
+.login-form input {
+  background-color: rgba(0,0,0,0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 15px 15px 15px 45px; /* پدینگ راست برای آیکون */
+  width: 100%;
+  color: #fff;
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 1rem;
+}
+.login-form input:focus {
+  outline: none;
+  border-color: var(--indigo-400);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4);
+}
+
+.login-form .btn-primary {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
+  background-color: var(--indigo-400);
+  color: #fff;
+}
+.error-message {
+  color: #f87171; /* red-400 */
+  text-align: center;
+  margin-top: 15px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--text-secondary-light);
+  margin: 25px 0;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--glass-border);
+}
+.divider:not(:empty)::before {
+  margin-left: .5em; /* فاصله در حالت راست‌چین */
+}
+.divider:not(:empty)::after {
+  margin-right: .5em; /* فاصله در حالت راست‌چین */
+}
+
+.google-login-container {
+  display: flex;
+  justify-content: center;
+}
+
+.toggle-mode {
+  text-align: center;
+  margin-top: 25px;
+  color: var(--text-secondary-light);
+}
+.toggle-mode span {
+  color: var(--indigo-300);
+  font-weight: bold;
+  cursor: pointer;
+}/* src/App.css - استایل‌های نهایی و اصلاح شده برای صفحه لاگین */
+
+/* کانتینر اصلی صفحه لاگین */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px; /* اندازه کانتینر را کمی بیشتر کردیم */
+  padding: 30px;
+  margin: auto; /* برای اینکه در وسط صفحه قرار گیرد */
+}
+
+/* کانتینر و استایل لوگو */
+.login-logo-container {
+  margin-bottom: 30px; /* فاصله بیشتر از عنوان */
+}
+.login-logo {
+  width: 120px; /* لوگو را کمی بزرگتر کردیم */
+  height: 120px;
+  border-radius: 25px; /* گوشه‌های گردتر */
+  box-shadow: 0 12px 25px rgba(0,0,0,0.3); /* سایه عمیق‌تر */
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 35px; /* فاصله بیشتر برای header */
+}
+.login-header h1 {
+  font-size: 2.2rem; /* اندازه بزرگتر برای عنوان اصلی */
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.login-header p {
+  color: var(--text-secondary-light);
+  font-size: 1.05rem;
+}
+
+/* استایل گروه اینپوت‌ها */
+.input-group {
+  position: relative;
+  margin-bottom: 25px; /* فاصله بیشتر بین فیلدها */
+  width: 100%; /* حتما عرض 100% باشد */
+}
+.input-group i {
+  position: absolute;
+  left: 18px; /* ۱. آیکون را به سمت چپ بردیم */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary-light);
+  font-size: 1.1rem; /* آیکون کمی بزرگتر شد */
+}
+.login-form input {
+  background-color: rgba(0,0,0,0.25); /* کمی تیره‌تر برای کنتراست بهتر */
+  border: 1px solid var(--glass-border);
+  border-radius: 14px; /* گوشه‌های گردتر */
+  padding: 16px 18px 16px 55px; /* ۲. پدینگ چپ برای جای آیکون */
+  width: 100%;
+  color: #fff;
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 1.05rem;
+  text-align: right; /* ۳. متن به صورت راست‌چین */
+  box-sizing: border-box; /* برای جلوگیری از overflow در عرض 100% */
+}
+.login-form input::placeholder {
+    color: var(--text-secondary-light); /* رنگ placehodler را بهتر کردیم */
+    opacity: 0.7;
+}
+.login-form input:focus {
+  outline: none;
+  border-color: var(--indigo-400);
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.5); /* سایه فوکوس کمی بیشتر */
+}
+
+/* استایل دکمه اصلی */
+.login-form .btn-primary {
+  width: 100%;
+  padding: 18px; /* پدینگ بیشتر برای دکمه */
+  font-size: 1.2rem; /* متن دکمه بزرگتر شد */
+  background-color: var(--indigo-500); /* رنگ کمی تیره‌تر */
+  color: #fff;
+  border-radius: 14px; /* گوشه‌های گردتر */
+  transition: background-color 0.3s ease;
+}
+.login-form .btn-primary:hover {
+  background-color: var(--indigo-600);
+}
+.login-form .btn-primary:disabled {
+  background-color: var(--indigo-300);
+  cursor: not-allowed;
+}
+
+/* جداکننده "یا" */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--text-secondary-light);
+  margin: 30px 0; /* فاصله بیشتر */
+  width: 100%;
+  font-size: 0.95rem;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--glass-border);
+}
+.divider:not(:empty)::before {
+  margin-left: .7em;
+}
+.divider:not(:empty)::after {
+  margin-right: .7em;
+}
+
+/* استایل‌های زیباسازی دکمه گوگل */
+.google-login-container {
+  width: 100%; /* عرض دکمه گوگل به اندازه کانتینر */
+  display: flex;
+  justify-content: center;
+  margin-top: 10px; /* فاصله از جداکننده */
+}
+/* اعمال استایل به دکمه واقعی گوگل */
+.google-login-container > div > div {
+    border-radius: 14px !important; /* گرد کردن گوشه‌های دکمه گوگل */
+    overflow: hidden; /* مهم برای اعمال border-radius */
+    width: 100% !important; /* اطمینان از اینکه عرض 100% را بگیرد */
+    height: 50px !important; /* ارتفاع ثابت برای دکمه */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* سایه کمی ملایم‌تر */
+    transition: box-shadow 0.3s ease;
+}
+.google-login-container > div > div:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+
+.toggle-mode {
+  text-align: center;
+  margin-top: 30px; /* فاصله بیشتر */
+  color: var(--text-secondary-light);
+  font-size: 1rem;
+}
+.toggle-mode span {
+  color: var(--indigo-300);
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.toggle-mode span:hover {
+    color: var(--indigo-200);
+}
+.error-message {
+  color: #f87171; /* red-400 */
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.95rem;
 }

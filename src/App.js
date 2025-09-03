@@ -1,6 +1,7 @@
 // src/App.js
 
 import React, { useState, useEffect } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google'; // ۱. ایمپورت کتابخانه گوگل
 import { quizId, quizData } from './QuizData'; 
 import { reviewsData } from './data/reviewsData';
 import LoginScreen from './components/LoginScreen';
@@ -12,13 +13,16 @@ import OKRScreen from './components/OKRScreen';
 import QuizHomeScreen from './components/QuizHomeScreen';
 import CalendarScreen from './components/CalendarScreen';
 import KnowledgeScreen from './components/KnowledgeScreen';
-import AIScreen from './components/AIScreen';
+// کامپوننت AIScreen قبلاً حذف شده است
 import PomodoroScreen from './components/PomodoroScreen';
 import ReviewHomeScreen from './components/ReviewHomeScreen';
 import ReviewDetailScreen from './components/ReviewDetailScreen';
 import PricesScreen from './components/PricesScreen';
-import NewsScreen from './components/NewsScreen'; // ایمپورت کامپوننت جدید
+import NewsScreen from './components/NewsScreen';
 import './App.css';
+
+// ۲. Client ID شما اینجا قرار گرفت
+const GOOGLE_CLIENT_ID = "395041529266-l0vt0ufonj84e20h17r986jd7i1uh26t.apps.googleusercontent.com";
 
 const shuffleArray = (array) => {
   const newArray = [...array];
@@ -58,8 +62,11 @@ function App() {
     if (!user.pomodoroStats) user.pomodoroStats = { dailyCycles: {}, totalPoints: 0 };
     if (!user.results) user.results = {};
     setCurrentUser(user);
-    localStorage.setItem('loggedInUser', user.phone);
-    localStorage.setItem(user.phone, JSON.stringify(user));
+    // **مهم:** برای کاربران گوگل، باید یک شناسه منحصر به فرد دیگر (مثل ایمیل) ذخیره شود
+    if (user.phone) {
+      localStorage.setItem('loggedInUser', user.phone);
+      localStorage.setItem(user.phone, JSON.stringify(user));
+    }
     setAppState('dashboard');
   };
 
@@ -83,11 +90,10 @@ function App() {
   const handleGoToOKR = () => setAppState('okr');
   const handleGoToCalendar = () => setAppState('calendar');
   const handleGoToKnowledge = () => setAppState('knowledge');
-  const handleGoToAI = () => setAppState('ai_assistant');
   const handleGoToPomodoro = () => setAppState('pomodoro');
   const handleGoToReviews = () => setAppState('reviews_home');
   const handleGoToPrices = () => setAppState('prices');
-  const handleGoToNews = () => setAppState('news'); // تابع جدید
+  const handleGoToNews = () => setAppState('news');
   
   const handleSelectReviewCategory = (category) => {
     const productToShow = reviewsData[category]?.[0];
@@ -104,7 +110,9 @@ function App() {
 
   const handleUpdateUser = (updatedUser) => {
     setCurrentUser(updatedUser);
-    localStorage.setItem(updatedUser.phone, JSON.stringify(updatedUser));
+    if (updatedUser.phone) {
+      localStorage.setItem(updatedUser.phone, JSON.stringify(updatedUser));
+    }
   };
   
   const handleRoleSelect = (roleKey) => {
@@ -152,7 +160,6 @@ function App() {
                   onGoToOKR={handleGoToOKR} 
                   onGoToCalendar={handleGoToCalendar} 
                   onGoToKnowledge={handleGoToKnowledge} 
-                  onGoToAI={handleGoToAI} 
                   onGoToPomodoro={handleGoToPomodoro}
                   onGoToReviews={handleGoToReviews}
                   onGoToPrices={handleGoToPrices}
@@ -168,8 +175,6 @@ function App() {
         return <CalendarScreen user={currentUser} onUpdateUser={handleUpdateUser} onGoToDashboard={handleGoToDashboard} />;
       case 'knowledge':
         return <KnowledgeScreen onGoToDashboard={handleGoToDashboard} />;
-      case 'ai_assistant':
-        return <AIScreen onGoToDashboard={handleGoToDashboard} />;
       case 'pomodoro':
         return <PomodoroScreen user={currentUser} onUpdateUser={handleUpdateUser} onGoToDashboard={handleGoToDashboard} />;
       case 'reviews_home':
@@ -188,6 +193,7 @@ function App() {
                   currentScenario={currentScenario} 
                   currentQuestionIndex={currentQuestionIndex} 
                   onAnswerSelect={handleAnswerSelect} 
+                  onGoBack={handleGoToQuizHome}
                />;
       case 'results':
         return <ResultsScreen 
@@ -205,9 +211,12 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {renderContent()}
-    </div>
+    // ۳. کل اپلیکیشن داخل این Provider قرار گرفت
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <div className="App">
+        {renderContent()}
+      </div>
+    </GoogleOAuthProvider>
   );
 }
 

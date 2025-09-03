@@ -6,9 +6,8 @@ import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { quizId } from '../QuizData';
-import logo from '../Logo.jpg';
 
-function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGoToKnowledge, onGoToAI, onGoToPomodoro, onLogout, onGoToDashboard, onGoToReviews, onGoToPrices, onGoToNews }) {
+function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGoToKnowledge, onGoToPomodoro, onLogout, onGoToDashboard, onGoToReviews, onGoToPrices, onGoToNews }) {
   
   const userProgress = useMemo(() => {
     if (!user || !user.results || !user.results[quizId] || user.results[quizId].length === 0) return 0;
@@ -41,8 +40,8 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
       </header>
 
       <main className="compact-main">
+        {/* ✅ کارت‌های اصلی جدید */}
         <div className="dashboard-grid grid grid-cols-2 gap-4 compact">
-          {/* --- کلاس‌های رنگی اینجا اصلاح شدند --- */}
           <div className="dashboard-card glass-card" onClick={onGoToQuizHome}>
             <div className="icon-wrapper bg-green-500/20 text-green-300"><i className="fa-solid fa-file-signature"></i></div>
             <h3 className="card-title">شبیه‌ساز</h3>
@@ -51,21 +50,21 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
             <div className="icon-wrapper bg-orange-500/20 text-orange-300"><i className="fa-solid fa-book-bookmark"></i></div>
             <h3 className="card-title">بانک دانش</h3>
           </div>
-          <div className="dashboard-card glass-card" onClick={onGoToCalendar}>
+           <div className="dashboard-card glass-card" onClick={onGoToCalendar}>
             <div className="icon-wrapper bg-yellow-500/20 text-yellow-300"><i className="fa-solid fa-calendar-days"></i></div>
             <h3 className="card-title">برنامه ریزی</h3>
           </div>
-           <div className="dashboard-card glass-card" onClick={onGoToReviews}>
+          <div className="dashboard-card glass-card" onClick={onGoToReviews}>
             <div className="icon-wrapper bg-purple-500/20 text-purple-300"><i className="fa-solid fa-star"></i></div>
             <h3 className="card-title">راهنمای مدیران</h3>
           </div>
-          <div className="dashboard-card glass-card" onClick={onGoToPrices}>
-            <div className="icon-wrapper bg-indigo-500/20 text-indigo-300"><i className="fa-solid fa-chart-line"></i></div>
-            <h3 className="card-title">قیمت بازار</h3>
+          <div className="dashboard-card glass-card" onClick={onGoToOKR}>
+            <div className="icon-wrapper bg-blue-500/20 text-blue-300"><i className="fa-solid fa-bullseye"></i></div>
+            <h3 className="card-title">هدف‌گذاری</h3>
           </div>
-          <div className="dashboard-card glass-card" onClick={onGoToNews}>
-            <div className="icon-wrapper bg-red-500/20 text-red-300"><i className="fa-solid fa-newspaper"></i></div>
-            <h3 className="card-title">اخبار مدیریتی</h3>
+          <div className="dashboard-card glass-card" onClick={onGoToPomodoro}>
+            <div className="icon-wrapper bg-teal-500/20 text-teal-300"><i className="fa-solid fa-clock"></i></div>
+            <h3 className="card-title">کار عمیق</h3>
           </div>
         </div>
 
@@ -75,11 +74,11 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
         </Swiper>
       </main>
 
+      {/* ✅ نوار پایین جدید */}
       <footer className="bottom-nav compact">
         <div className="nav-item active" onClick={onGoToDashboard}><i className="fa-solid fa-home"></i><span className="nav-text">خانه</span></div>
-        <div className="nav-item" onClick={onGoToOKR}><i className="fa-solid fa-bullseye"></i><span className="nav-text">هدف گزاری</span></div>
-        <div className="nav-item" onClick={onGoToPomodoro}><i className="fa-solid fa-clock"></i><span className="nav-text">تمرکز</span></div>
-        <div className="nav-item" onClick={onGoToAI}><i className="fa-solid fa-robot"></i><span className="nav-text">دستیار AI</span></div>
+        <div className="nav-item" onClick={onGoToNews}><i className="fa-solid fa-newspaper"></i><span className="nav-text">اخبار</span></div>
+        <div className="nav-item" onClick={onGoToPrices}><i className="fa-solid fa-chart-line"></i><span className="nav-text">بازار</span></div>
         <div className="nav-item" onClick={onLogout}><i className="fa-solid fa-sign-out-alt"></i><span className="nav-text">خروج</span></div>
       </footer>
     </div>
