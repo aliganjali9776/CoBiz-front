@@ -1688,4 +1688,25 @@ body:has(.okr-container.v2-design) {
   text-align: center;
   margin-top: 15px;
   font-size: 0.95rem;
+}/* src/App.css - استایل‌های بخش فراموشی رمز عبور */
+
+.forgot-password-link {
+  display: block;
+  text-align: left; /* در حالت راست‌چین، این باعث می‌شود به سمت چپ برود */
+  margin: -10px 0 20px 0;
+  color: var(--text-secondary-light);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.forgot-password-link:hover {
+  color: #fff;
+}
+
+.success-message {
+  color: var(--green-400);
+  text-align: center;
+  background-color: rgba(74, 222, 128, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 15px;
 }

@@ -40,7 +40,6 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
       </header>
 
       <main className="compact-main">
-        {/* ✅ کارت‌های اصلی جدید */}
         <div className="dashboard-grid grid grid-cols-2 gap-4 compact">
           <div className="dashboard-card glass-card" onClick={onGoToQuizHome}>
             <div className="icon-wrapper bg-green-500/20 text-green-300"><i className="fa-solid fa-file-signature"></i></div>
@@ -74,7 +73,6 @@ function DashboardScreen({ user, onGoToQuizHome, onGoToOKR, onGoToCalendar, onGo
         </Swiper>
       </main>
 
-      {/* ✅ نوار پایین جدید */}
       <footer className="bottom-nav compact">
         <div className="nav-item active" onClick={onGoToDashboard}><i className="fa-solid fa-home"></i><span className="nav-text">خانه</span></div>
         <div className="nav-item" onClick={onGoToNews}><i className="fa-solid fa-newspaper"></i><span className="nav-text">اخبار</span></div>

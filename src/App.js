@@ -1,7 +1,7 @@
 // src/App.js
 
 import React, { useState, useEffect } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google'; // ۱. ایمپورت کتابخانه گوگل
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { quizId, quizData } from './QuizData'; 
 import { reviewsData } from './data/reviewsData';
 import LoginScreen from './components/LoginScreen';
@@ -13,7 +13,6 @@ import OKRScreen from './components/OKRScreen';
 import QuizHomeScreen from './components/QuizHomeScreen';
 import CalendarScreen from './components/CalendarScreen';
 import KnowledgeScreen from './components/KnowledgeScreen';
-// کامپوننت AIScreen قبلاً حذف شده است
 import PomodoroScreen from './components/PomodoroScreen';
 import ReviewHomeScreen from './components/ReviewHomeScreen';
 import ReviewDetailScreen from './components/ReviewDetailScreen';
@@ -21,9 +20,9 @@ import PricesScreen from './components/PricesScreen';
 import NewsScreen from './components/NewsScreen';
 import './App.css';
 
-// ۲. Client ID شما اینجا قرار گرفت
-const GOOGLE_CLIENT_ID = "395041529266-l0vt0ufonj84e20h17r986jd7i1uh26t.apps.googleusercontent.com";
-
+// ✅ ۱. Client ID از فایل .env خوانده می‌شود
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+console.log("My Client ID is:", GOOGLE_CLIENT_ID); // <-- این خط را اضافه کن
 const shuffleArray = (array) => {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -45,9 +44,12 @@ function App() {
   const [selectedReview, setSelectedReview] = useState(null);
 
   useEffect(() => {
-    const loggedInUserPhone = localStorage.getItem('loggedInUser');
-    if (loggedInUserPhone) {
-      const userData = JSON.parse(localStorage.getItem(loggedInUserPhone));
+    // برای امنیت، ابتدا توکن را چک می‌کنیم
+    const token = localStorage.getItem('authToken');
+    const loggedInUserIdentifier = localStorage.getItem('loggedInUser');
+
+    if (token && loggedInUserIdentifier) {
+      const userData = JSON.parse(localStorage.getItem(loggedInUserIdentifier));
       if (userData) {
         setCurrentUser(userData);
         setAppState('dashboard');
@@ -55,23 +57,38 @@ function App() {
     }
   }, []);
 
-  const handleLogin = (userFromBackend) => {
-    let user = { ...userFromBackend };
-    if (!user.okrsData) user.okrsData = { yearly: [], quarterly: [], monthly: [] };
-    if (!user.calendarEvents) user.calendarEvents = [];
-    if (!user.pomodoroStats) user.pomodoroStats = { dailyCycles: {}, totalPoints: 0 };
-    if (!user.results) user.results = {};
-    setCurrentUser(user);
-    // **مهم:** برای کاربران گوگل، باید یک شناسه منحصر به فرد دیگر (مثل ایمیل) ذخیره شود
-    if (user.phone) {
-      localStorage.setItem('loggedInUser', user.phone);
-      localStorage.setItem(user.phone, JSON.stringify(user));
+  // ✅ ۲. تابع لاگین برای دریافت user و token به‌روز شد
+  const handleLogin = (dataFromBackend) => {
+    const { user, token } = dataFromBackend;
+
+    let userToSave = { ...user };
+    if (!userToSave.okrsData) userToSave.okrsData = { yearly: [], quarterly: [], monthly: [] };
+    if (!userToSave.calendarEvents) userToSave.calendarEvents = [];
+    if (!userToSave.pomodoroStats) userToSave.pomodoroStats = { dailyCycles: {}, totalPoints: 0 };
+    if (!userToSave.results) userToSave.results = {};
+    
+    setCurrentUser(userToSave);
+
+    if (token) {
+      localStorage.setItem('authToken', token);
     }
+    
+    const userIdentifier = userToSave.email || userToSave.phone;
+    if (userIdentifier) {
+      localStorage.setItem('loggedInUser', userIdentifier);
+      localStorage.setItem(userIdentifier, JSON.stringify(userToSave));
+    }
+
     setAppState('dashboard');
   };
 
   const handleLogout = () => {
+    const loggedInUserIdentifier = localStorage.getItem('loggedInUser');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('loggedInUser');
+    if(loggedInUserIdentifier) {
+      localStorage.removeItem(loggedInUserIdentifier);
+    }
     setCurrentUser(null);
     setAppState('login');
   };
@@ -94,6 +111,11 @@ function App() {
   const handleGoToReviews = () => setAppState('reviews_home');
   const handleGoToPrices = () => setAppState('prices');
   const handleGoToNews = () => setAppState('news');
+
+  const handleGoToAdminPanel = () => {
+    const adminUrl = 'https://cobiz-admin-panel.netlify.app/'; 
+    window.open(adminUrl, '_blank');
+  };
   
   const handleSelectReviewCategory = (category) => {
     const productToShow = reviewsData[category]?.[0];
@@ -110,8 +132,9 @@ function App() {
 
   const handleUpdateUser = (updatedUser) => {
     setCurrentUser(updatedUser);
-    if (updatedUser.phone) {
-      localStorage.setItem(updatedUser.phone, JSON.stringify(updatedUser));
+    const userIdentifier = updatedUser.email || updatedUser.phone;
+    if (userIdentifier) {
+      localStorage.setItem(userIdentifier, JSON.stringify(updatedUser));
     }
   };
   
@@ -166,6 +189,7 @@ function App() {
                   onGoToNews={handleGoToNews}
                   onLogout={handleLogout}
                   onGoToDashboard={handleGoToDashboard} 
+                  onGoToAdminPanel={handleGoToAdminPanel}
                />;
       case 'quiz_home':
         return <QuizHomeScreen user={currentUser} onStartNewQuiz={handleStartNewQuiz} onGoToDashboard={handleGoToDashboard} onGoToLeaderboard={()=>{}} />;
@@ -211,7 +235,6 @@ function App() {
   };
 
   return (
-    // ۳. کل اپلیکیشن داخل این Provider قرار گرفت
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <div className="App">
         {renderContent()}
@@ -221,3 +244,4 @@ function App() {
 }
 
 export default App;
+
